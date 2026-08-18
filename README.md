@@ -8,3 +8,8 @@ Je suis Sam, j'ai 105 kilos bench et je suis mediamaticien
 Un site pour pouvoir trouver de films selon ses envies
 ## Comment me trouver
 - GitHub : samuelporchet1450
+
+## Mes sites préféré
+- [youtube](www.youtube.com)
+- [pinterest](www.pinterest.com)
+- [purestream](www.purestream.club)
