@@ -13,3 +13,5 @@ Un site pour pouvoir trouver de films selon ses envies
 - [youtube](www.youtube.com)
 - [pinterest](www.pinterest.com)
 - [purestream](www.purestream.club)
+
+ _Repo cloné et ouvert dans VS Code._
