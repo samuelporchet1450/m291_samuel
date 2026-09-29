@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Red Line | Propositions de DA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Manrope:wght@400;500;700&family=Bricolage+Grotesque:opsz,wdth,wght@12..96,75..100,400..800&family=IBM+Plex+Mono:wght@400;600&family=Inter+Tight:wght@400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #1b1b1d; color: #eee; font-family: "Manrope", sans-serif; }
+  .page-head { max-width: 1200px; margin: 0 auto; padding: 32px 16px 8px; }
+  .page-head h1 { margin: 0; font-size: 22px; font-weight: 700; }
+  .page-head p { margin: 6px 0 0; color: #999; font-size: 14px; }
+  .row { display: flex; flex-wrap: wrap; gap: 32px; justify-content: center; padding: 24px 16px 60px; }
+  .col { width: 360px; max-width: 100%; }
+  .label { font-size: 13px; color: #aaa; margin: 0 0 4px; letter-spacing: .04em; }
+  .label b { color: #fff; font-size: 17px; display: block; letter-spacing: 0; }
+  .notes { font-size: 13px; line-height: 1.55; color: #bbb; margin: 14px 0 0; padding-left: 18px; }
+  .phone {
+    position: relative; width: 360px; max-width: 100%; height: 760px; margin-top: 12px;
+    border-radius: 36px; overflow: hidden; border: 8px solid #000;
+    box-shadow: 0 30px 60px rgba(0,0,0,.5);
+  }
+  .scroll { height: 100%; overflow: hidden; }
+
+  /* ================= A. AURA ================= */
+  .aura { background: #f3efe9; color: #1d1a22; font-family: "Manrope", sans-serif; }
+  .aura .blob { position: absolute; border-radius: 50%; filter: blur(60px); opacity: .85; animation: drift 12s ease-in-out infinite alternate; }
+  .aura .b1 { width: 320px; height: 320px; background: #ff7a8a; top: -80px; left: -60px; }
+  .aura .b2 { width: 260px; height: 260px; background: #ffb86b; top: 60px; right: -90px; animation-delay: -4s; }
+  .aura .b3 { width: 220px; height: 220px; background: #b69cff; top: 230px; left: 40px; animation-delay: -8s; }
+  @keyframes drift { to { transform: translate(30px, 40px) scale(1.15); } }
+  .aura .in { position: relative; padding: 22px 20px 120px; }
+  .aura .top { display: flex; justify-content: space-between; align-items: center; font-weight: 700; font-size: 14px; }
+  .aura .avatar { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,.6); backdrop-filter: blur(10px); display: grid; place-items: center; font-size: 12px; }
+  .aura .q { margin: 90px 0 0; font-size: 14px; font-weight: 500; opacity: .7; }
+  .aura h2 { margin: 6px 0 0; font-family: "Instrument Serif", serif; font-weight: 400; font-size: 64px; line-height: .95; letter-spacing: -.02em; }
+  .aura h2 i { font-style: italic; }
+  .aura .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+  .aura .chip { padding: 8px 14px; border-radius: 999px; background: rgba(255,255,255,.55); backdrop-filter: blur(12px); font-size: 13px; font-weight: 500; border: 1px solid rgba(255,255,255,.8); }
+  .aura .chip.on { background: #1d1a22; color: #fff; border-color: #1d1a22; }
+  .aura .chip .d { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 0; }
+  .aura h3 { margin: 34px 0 12px; font-family: "Instrument Serif", serif; font-weight: 400; font-size: 28px; }
+  .aura .list { background: rgba(255,255,255,.55); backdrop-filter: blur(16px); border-radius: 22px; padding: 6px; border: 1px solid rgba(255,255,255,.8); }
+  .aura .item { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 16px; }
+  .aura .item + .item { border-top: 1px solid rgba(29,26,34,.06); }
+  .aura .cov { width: 44px; height: 44px; border-radius: 12px; flex: none; }
+  .aura .item .t { flex: 1; font-size: 14px; font-weight: 700; }
+  .aura .item .t small { display: block; font-weight: 400; opacity: .6; font-size: 12px; }
+  .aura .item .du { font-size: 12px; opacity: .6; }
+  .aura .player { position: absolute; left: 12px; right: 12px; bottom: 14px; padding: 12px 14px; border-radius: 24px; background: rgba(29,26,34,.9); color: #fff; backdrop-filter: blur(12px); display: flex; align-items: center; gap: 12px; }
+  .aura .player .cov { width: 40px; height: 40px; }
+  .aura .player .t { flex: 1; font-size: 13px; font-weight: 700; }
+  .aura .player .t small { display: block; font-weight: 400; opacity: .6; }
+  .aura .player .bar { height: 3px; border-radius: 3px; background: rgba(255,255,255,.2); margin-top: 6px; overflow: hidden; }
+  .aura .player .bar i { display: block; width: 40%; height: 100%; background: linear-gradient(90deg, #ff7a8a, #ffb86b); }
+  .aura .pp { width: 38px; height: 38px; border-radius: 50%; background: #fff; color: #1d1a22; display: grid; place-items: center; font-size: 14px; }
+
+  /* ================= B. RISO ZINE ================= */
+  .riso { background: #f0e9da; color: #1f2a6b; font-family: "IBM Plex Mono", monospace; }
+  .riso::before { content: ""; position: absolute; inset: 0; pointer-events: none; z-index: 5; opacity: .35; mix-blend-mode: multiply;
+    background-image: radial-gradient(rgba(0,0,0,.25) 0.6px, transparent 0.7px); background-size: 3px 3px; }
+  .riso .in { position: relative; padding: 20px 18px 120px; }
+  .riso .top { display: flex; justify-content: space-between; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; border-bottom: 2px solid #1f2a6b; padding-bottom: 8px; }
+  .riso .title { position: relative; margin-top: 26px; height: 230px; }
+  .riso .title .p, .riso .title .b { position: absolute; left: 0; font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-variation-settings: "wdth" 75; font-size: 132px; line-height: .8; letter-spacing: -.03em; mix-blend-mode: multiply; }
+  .riso .title .p { color: #ff48b0; top: 0; }
+  .riso .title .b { color: #0078bf; top: 104px; left: 14px; }
+  .riso .sticker { position: absolute; right: 4px; top: 70px; width: 96px; height: 96px; border-radius: 50%; background: #ffe800; color: #1f2a6b; display: grid; place-items: center; text-align: center; font-size: 11px; font-weight: 600; line-height: 1.2; transform: rotate(12deg); mix-blend-mode: multiply; }
+  .riso .intro { font-size: 13px; line-height: 1.5; margin: 6px 0 0; }
+  .riso h3 { margin: 26px 0 10px; font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 26px; text-transform: uppercase; }
+  .riso .tape { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .riso .card { position: relative; aspect-ratio: 1; padding: 10px; overflow: hidden; border: 2px solid #1f2a6b; }
+  .riso .card:nth-child(1) { background: #ff48b0; transform: rotate(-2deg); }
+  .riso .card:nth-child(2) { background: #0078bf; color: #f0e9da; transform: rotate(1.5deg); }
+  .riso .card:nth-child(3) { background: #ffe800; transform: rotate(1deg); }
+  .riso .card:nth-child(4) { background: #00a95c; color: #f0e9da; transform: rotate(-1.5deg); }
+  .riso .card b { font-family: "Bricolage Grotesque", sans-serif; font-weight: 800; font-size: 24px; line-height: .9; text-transform: uppercase; display: block; }
+  .riso .card small { position: absolute; bottom: 8px; left: 10px; font-size: 10px; text-transform: uppercase; }
+  .riso .card .dots { position: absolute; right: -20px; bottom: -20px; width: 90px; height: 90px; border-radius: 50%;
+    background-image: radial-gradient(currentColor 2px, transparent 2.5px); background-size: 8px 8px; opacity: .45; }
+  .riso .player { position: absolute; left: 12px; right: 12px; bottom: 14px; z-index: 6; padding: 10px 12px; background: #1f2a6b; color: #f0e9da; border: 2px solid #1f2a6b; box-shadow: 5px 5px 0 #ff48b0; display: flex; align-items: center; gap: 10px; font-size: 12px; }
+  .riso .player .t { flex: 1; }
+  .riso .player .t small { display: block; opacity: .7; }
+  .riso .player .pp { width: 36px; height: 36px; background: #ffe800; color: #1f2a6b; display: grid; place-items: center; font-weight: 600; }
+
+  /* ================= C. MOOD MAP ================= */
+  .map { background: #f7f7f5; color: #0d0d0d; font-family: "Inter Tight", sans-serif; }
+  .map .in { padding: 18px 18px 120px; }
+  .map .top { display: flex; justify-content: space-between; font-family: "JetBrains Mono", monospace; font-size: 11px; text-transform: uppercase; }
+  .map h2 { margin: 28px 0 0; font-weight: 900; font-size: 56px; line-height: .9; letter-spacing: -.045em; }
+  .map h2 em { font-style: normal; background: #d4ff3a; padding: 0 4px; }
+  .map .grid { position: relative; margin-top: 22px; aspect-ratio: 1; border: 1.5px solid #0d0d0d;
+    background-image: linear-gradient(#0d0d0d14 1px, transparent 1px), linear-gradient(90deg, #0d0d0d14 1px, transparent 1px); background-size: 10% 10%; }
+  .map .grid::before, .map .grid::after { content: ""; position: absolute; background: #0d0d0d; }
+  .map .grid::before { left: 50%; top: 0; bottom: 0; width: 1.5px; }
+  .map .grid::after { top: 50%; left: 0; right: 0; height: 1.5px; }
+  .map .ax { position: absolute; font-family: "JetBrains Mono", monospace; font-size: 10px; text-transform: uppercase; background: #f7f7f5; padding: 1px 3px; z-index: 1; }
+  .map .pt { position: absolute; width: 10px; height: 10px; border-radius: 50%; background: #0d0d0d; transform: translate(-50%, -50%); z-index: 1; }
+  .map .pt span { position: absolute; left: 12px; top: -4px; font-size: 11px; white-space: nowrap; font-weight: 500; }
+  .map .me { width: 26px; height: 26px; background: #d4ff3a; border: 2px solid #0d0d0d; animation: pulse 2s ease-in-out infinite; z-index: 2; }
+  @keyframes pulse { 50% { box-shadow: 0 0 0 10px rgba(212,255,58,.35); } }
+  .map .hint { margin: 10px 0 0; font-family: "JetBrains Mono", monospace; font-size: 11px; }
+  .map table { width: 100%; border-collapse: collapse; margin-top: 22px; font-size: 13px; }
+  .map th { text-align: left; font-family: "JetBrains Mono", monospace; font-size: 10px; font-weight: 400; text-transform: uppercase; border-bottom: 1.5px solid #0d0d0d; padding: 6px 0; }
+  .map td { padding: 9px 0; border-bottom: 1px solid #0d0d0d22; }
+  .map td.n { font-family: "JetBrains Mono", monospace; font-size: 12px; text-align: right; }
+  .map .player { position: absolute; left: 0; right: 0; bottom: 0; padding: 12px 18px 18px; background: #0d0d0d; color: #f7f7f5; }
+  .map .player .r { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 700; }
+  .map .player .r small { font-family: "JetBrains Mono", monospace; font-weight: 400; font-size: 11px; color: #d4ff3a; }
+  .map .player .bar { display: flex; gap: 2px; margin-top: 10px; height: 18px; align-items: flex-end; }
+  .map .player .bar i { flex: 1; background: #444; }
+  .map .player .bar i.on { background: #d4ff3a; }
+
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+</style>
+</head>
+<body>
+  <header class="page-head">
+    <h1>Red Line : 3 propositions de DA</h1>
+    <p>Même contenu que la V1 (accueil mobile), trois univers différents.</p>
+  </header>
+
+  <div class="row">
+
+    <!-- ================= A ================= -->
+    <section class="col">
+      <p class="label">PROPOSITION A <b>Aura</b></p>
+      <div class="phone aura">
+        <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+        <div class="scroll"><div class="in">
+          <div class="top"><span>red line</span><span class="avatar">SP</span></div>
+          <p class="q">Bonsoir Samuel, comment tu te sens ?</p>
+          <h2>Plutôt <i>nuit blanche</i> ce soir</h2>
+          <div class="chips">
+            <span class="chip on"><span class="d" style="background:#ff7a8a"></span>Nuit blanche</span>
+            <span class="chip"><span class="d" style="background:#6bb5ff"></span>Mélancolie</span>
+            <span class="chip"><span class="d" style="background:#ffd23f"></span>Euphorie</span>
+            <span class="chip"><span class="d" style="background:#8ee3b0"></span>Calme</span>
+            <span class="chip"><span class="d" style="background:#ff5a3c"></span>Colère</span>
+          </div>
+          <h3>Pour ton humeur</h3>
+          <div class="list">
+            <div class="item"><span class="cov" style="background:linear-gradient(135deg,#ff7a8a,#b69cff)"></span><span class="t">Another Day, Slowed<small>Kasper Vale</small></span><span class="du">4:12</span></div>
+            <div class="item"><span class="cov" style="background:linear-gradient(135deg,#ffb86b,#ff7a8a)"></span><span class="t">Glass Reverb<small>Lune Basse</small></span><span class="du">3:47</span></div>
+            <div class="item"><span class="cov" style="background:linear-gradient(135deg,#b69cff,#6bb5ff)"></span><span class="t">Chase Lounge<small>Nova Drive</small></span><span class="du">5:03</span></div>
+          </div>
+        </div></div>
+        <div class="player">
+          <span class="cov" style="background:linear-gradient(135deg,#ff7a8a,#ffb86b)"></span>
+          <span class="t">Another Day, Slowed<small>Kasper Vale</small><span class="bar"><i></i></span></span>
+          <span class="pp">❚❚</span>
+        </div>
+      </div>
+      <ul class="notes">
+        <li>Doux, lumineux, émotionnel. Le fond change de couleur selon l'humeur choisie.</li>
+        <li>Instrument Serif (titres) + Manrope (texte).</li>
+        <li>L'app te parle : « comment tu te sens ? ».</li>
+      </ul>
+    </section>
+
+    <!-- ================= B ================= -->
+    <section class="col">
+      <p class="label">PROPOSITION B <b>Riso zine</b></p>
+      <div class="phone riso">
+        <div class="scroll"><div class="in">
+          <div class="top"><span>Red Line n°01</span><span>Mixtapes d'humeur</span></div>
+          <div class="title">
+            <span class="p">RED</span><span class="b">LINE</span>
+            <span class="sticker">100%<br>ton<br>humeur</span>
+          </div>
+          <p class="intro">Des cassettes imprimées à la main pour chaque état d'âme. Choisis ta couleur.</p>
+          <h3>Cette semaine</h3>
+          <div class="tape">
+            <div class="card"><b>Nuit<br>blanche</b><span class="dots"></span><small>4 titres, 17 min</small></div>
+            <div class="card"><b>Salt<br>water</b><span class="dots"></span><small>Mélancolie</small></div>
+            <div class="card"><b>High<br>noon</b><span class="dots"></span><small>Euphorie</small></div>
+            <div class="card"><b>Soft<br>static</b><span class="dots"></span><small>Calme</small></div>
+          </div>
+        </div></div>
+        <div class="player">
+          <span class="t">A1. Another Day, Slowed<small>Kasper Vale, 1:34 / 4:12</small></span>
+          <span class="pp">❚❚</span>
+        </div>
+      </div>
+      <ul class="notes">
+        <li>Tactile, joueur, « fait main ». Papier, trame, encres fluo qui se superposent.</li>
+        <li>Bricolage Grotesque (titres) + IBM Plex Mono (texte).</li>
+        <li>Chaque humeur = une encre. Idéal pour montrer ton côté graphiste.</li>
+      </ul>
+    </section>
+
+    <!-- ================= C ================= -->
+    <section class="col">
+      <p class="label">PROPOSITION C <b>Mood map</b></p>
+      <div class="phone map">
+        <div class="scroll"><div class="in">
+          <div class="top"><span>Red Line</span><span>22:47, mar. 29.09</span></div>
+          <h2>Où tu te<br>situes <em>ce soir</em> ?</h2>
+          <div class="grid">
+            <span class="ax" style="top:4px;left:50%;transform:translateX(-50%)">Énergie +</span>
+            <span class="ax" style="bottom:4px;left:50%;transform:translateX(-50%)">Énergie −</span>
+            <span class="ax" style="left:4px;top:50%;transform:translateY(-50%)">Sombre</span>
+            <span class="ax" style="right:4px;top:50%;transform:translateY(-50%)">Lumineux</span>
+            <span class="pt" style="left:78%;top:18%"><span>Euphorie</span></span>
+            <span class="pt" style="left:22%;top:24%"><span>Colère</span></span>
+            <span class="pt" style="left:24%;top:78%"><span>Mélancolie</span></span>
+            <span class="pt" style="left:72%;top:74%"><span>Calme</span></span>
+            <span class="pt me" style="left:38%;top:62%"></span>
+          </div>
+          <p class="hint">↳ Glisse le point, la playlist se compose.</p>
+          <table>
+            <tr><th>Titre</th><th style="text-align:right">BPM</th><th style="text-align:right">Durée</th></tr>
+            <tr><td>Another Day, Slowed</td><td class="n">72</td><td class="n">4:12</td></tr>
+            <tr><td>Glass Reverb</td><td class="n">68</td><td class="n">3:47</td></tr>
+            <tr><td>Chase Lounge</td><td class="n">84</td><td class="n">5:03</td></tr>
+          </table>
+        </div></div>
+        <div class="player">
+          <div class="r"><span>Another Day, Slowed</span><small>1:34 / 4:12</small></div>
+          <div class="bar">
+            <i class="on" style="height:40%"></i><i class="on" style="height:70%"></i><i class="on" style="height:55%"></i><i class="on" style="height:90%"></i><i class="on" style="height:60%"></i><i class="on" style="height:80%"></i><i class="on" style="height:45%"></i><i class="on" style="height:75%"></i><i style="height:50%"></i><i style="height:85%"></i><i style="height:40%"></i><i style="height:65%"></i><i style="height:95%"></i><i style="height:55%"></i><i style="height:70%"></i><i style="height:35%"></i><i style="height:60%"></i><i style="height:80%"></i><i style="height:50%"></i><i style="height:40%"></i>
+          </div>
+        </div>
+      </div>
+      <ul class="notes">
+        <li>Rationnel, précis, techno. Style suisse, noir et blanc + un vert acide.</li>
+        <li>Inter Tight (titres) + JetBrains Mono (données).</li>
+        <li>Nouvelle interaction : l'humeur devient un point sur une carte énergie × luminosité.</li>
+      </ul>
+    </section>
+
+  </div>
+</body>
+</html>

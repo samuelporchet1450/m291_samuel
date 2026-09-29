@@ -20,9 +20,14 @@
 
   /* Chaque morceau connaît sa playlist, pour l'afficher et reconstruire la file */
   const ALL_TRACKS = PLAYLISTS.flatMap((p) =>
-    p.tracks.map((t) => ({ ...t, playlist: p.id, mood: p.mood, tags: p.tags, secs: toSec(t.duration) }))
+    p.tracks.map((t) => ({ ...t, playlist: p.id, mood: p.mood, ink: p.ink, tags: p.tags, secs: toSec(t.duration) }))
   );
   const trackKey = (t) => `${t.playlist}/${t.title}`;
+
+  /* Encres riso : variables CSS --ink / --on, et une 2e encre pour la surimpression */
+  const inkVars = (name) => `--ink:${INKS[name].c};--on:${INKS[name].on}`;
+  const secondInk = (name) => (name === "blue" ? "pink" : "blue");
+  const paletteHtml = (names) => names.map((n) => `<i style="background:${INKS[n].c}"></i>`).join("");
 
   /* Pseudo-aléatoire stable, pour que les pochettes restent les mêmes */
   const seeded = (str) => {
@@ -56,7 +61,7 @@
     const s = HERO_SLIDES[i];
     $("#hero-slides").innerHTML = `
       <div class="slide">
-        <h1 class="big-title">${s.lines.map((l) => `<span>${esc(l)}</span>`).join("")}</h1>
+        <h1 class="big-title" style="--i1:${INKS[s.inks[0]].c};--i2:${INKS[s.inks[1]].c}">${s.lines.map((l) => `<span>${esc(l)}</span>`).join("")}</h1>
         <p class="slide__sub">${esc(s.sub)}</p>
         ${s.playlist ? `<a class="slide__cta" href="#/playlist/${s.playlist}">▶ Écouter</a>` : ""}
       </div>`;
@@ -90,9 +95,10 @@
     const slice = suggTracks.slice(suggPage * PER_PAGE, suggPage * PER_PAGE + PER_PAGE);
 
     $("#sugg-list").innerHTML = slice.map((t, i) => `
-      <li data-key="${esc(trackKey(t))}">
+      <li data-key="${esc(trackKey(t))}" style="${inkVars(t.ink)}">
         <button type="button">
           <span class="num">${pad(suggPage * PER_PAGE + i + 1)}</span>
+          <span class="swatch" aria-hidden="true"></span>
           <span class="name">${esc(t.title)}</span>
           <span class="mood">${esc(t.mood)}</span>
         </button>
@@ -102,7 +108,7 @@
     $("#sugg-empty").hidden = suggTracks.length > 0;
     $("#sugg-pager").innerHTML = suggTracks.length > PER_PAGE
       ? Array.from({ length: pages }, (_, i) =>
-          `<button aria-label="Page ${i + 1}" data-p="${i}" ${i === suggPage ? 'aria-current="true"' : ""}></button>`).join("")
+          `<button aria-label="Page ${i + 1}" data-p="${i}" ${i === suggPage ? 'aria-current="true"' : ""}>${i + 1}</button>`).join("")
       : "";
     markPlaying();
   }
@@ -122,27 +128,16 @@
   });
 
   /* ================= GRILLES ================= */
-  const hues = ["#ff2a40", "#ff7a6b", "#c4122b", "#ff4d5e", "#8f0f22", "#ff9a7a"];
-
-  function barsHtml(seed, n = 12) {
-    const r = seeded(seed);
-    return Array.from({ length: n }, () => `<i style="height:${20 + r() * 80}%"></i>`).join("");
-  }
-
   function renderGrids(list = PLAYLISTS) {
-    $("#playlist-grid").innerHTML = list.map((p, i) => {
-      const r = seeded(p.id);
-      return `
-      <li><a class="card" href="#/playlist/${p.id}"
-             style="--c1:${hues[i % hues.length]};--gx:${Math.round(r() * 100)}%;--gy:${Math.round(r() * 60)}%">
-        <span class="card__bars" aria-hidden="true">${barsHtml(p.id)}</span>
-        <span class="card__title">${esc(p.title.slice(0, 2).join(" "))}</span>
+    $("#playlist-grid").innerHTML = list.map((p) => `
+      <li><a class="card" href="#/playlist/${p.id}" style="${inkVars(p.ink)}">
+        <span class="card__title">${p.title.slice(0, 2).map(esc).join("<br>")}</span>
         <span class="card__meta">${esc(p.mood)}</span>
-      </a></li>`;
-    }).join("") || `<li class="empty">Aucune playlist.</li>`;
+      </a></li>`).join("") || `<li class="empty">Aucune playlist.</li>`;
 
-    $("#artist-grid").innerHTML = ARTISTS.map((a, i) => `
-      <li><a class="card card--artist" href="#/artist/${a.id}" style="--c1:${hues[(i + 3) % hues.length]};--gx:80%;--gy:90%">
+    $("#artist-grid").innerHTML = ARTISTS.map((a) => `
+      <li><a class="card card--artist" href="#/artist/${a.id}" style="${inkVars(a.ink)}">
+        <span class="card__portrait" aria-hidden="true"></span>
         <span class="card__initials" aria-hidden="true">${a.name.split(" ").map((w) => w[0]).join("")}</span>
         <span class="card__title">${esc(a.name)}</span>
         <span class="card__meta">${esc(a.genre)}</span>
@@ -151,6 +146,7 @@
 
   /* ================= RECHERCHE MOOD ================= */
   $("#search-input").addEventListener("input", (e) => {
+    if (!$("#view-detail").hidden) location.hash = "#/";
     const q = norm(e.target.value.trim());
     const match = (t) => !q || [t.title, t.mood, artistById[t.artist].name, ...t.tags].some((s) => norm(s).includes(q));
     suggTracks = ALL_TRACKS.filter(match);
@@ -175,14 +171,16 @@
   }
 
   function showDetail(kind, id) {
-    let title, desc, tracks, label;
+    let title, desc, tracks, label, ink, kicker;
     if (kind === "playlist" && playlistById[id]) {
       const p = playlistById[id];
-      title = p.title; desc = p.desc; label = `MOOD : ${p.mood.toUpperCase()}`;
+      title = p.title; desc = p.desc; label = "PLAYED ON REPEAT"; ink = p.ink;
+      kicker = `Humeur : ${p.mood}`;
       tracks = ALL_TRACKS.filter((t) => t.playlist === id);
     } else if (kind === "artist" && artistById[id]) {
       const a = artistById[id];
-      title = a.name.toUpperCase().split(" "); label = "PLAYED ON REPEAT";
+      title = a.name.toUpperCase().split(" "); label = "PLAYED ON REPEAT"; ink = a.ink;
+      kicker = `Artiste : ${a.genre}`;
       tracks = ALL_TRACKS.filter((t) => t.artist === id);
       desc = `${a.genre}. ${tracks.length} morceaux répartis dans ${new Set(tracks.map((t) => t.mood)).size} humeurs différentes.`;
     } else {
@@ -191,13 +189,18 @@
     }
 
     detailTracks = tracks;
+    const ink2 = secondInk(ink);
+    $("#view-detail").setAttribute("style", inkVars(ink));
+    $("#detail-kicker").textContent = kicker;
+    $("#detail-palette").innerHTML = paletteHtml([ink, ink2, "yellow"]);
+    $("#detail-title").style.cssText = `--i1:${INKS[ink].c};--i2:${INKS[ink2].c}`;
     $("#detail-title").innerHTML = title.map((l) => `<span>${esc(l)}</span>`).join("");
     $("#detail-desc").textContent = desc;
     fitTitle($("#detail-title"));
     $("#detail-label").textContent = label;
     $("#detail-tracks").innerHTML = tracks.map((t, i) => `
-      <li data-key="${esc(trackKey(t))}"><button type="button">
-        <span class="num">${pad(i + 1)}</span>
+      <li data-key="${esc(trackKey(t))}" style="${inkVars(t.ink)}"><button type="button">
+        <span class="num">A${i + 1}</span>
         <span>${esc(t.title)}${kind === "playlist" ? `<span class="artist">${esc(artistById[t.artist].name)}</span>` : `<span class="artist">${esc(t.mood)}</span>`}</span>
         <span class="dur">${t.duration}</span>
       </button></li>`).join("");
@@ -335,6 +338,7 @@
   });
 
   /* ================= INIT ================= */
+  $("#home-palette").innerHTML = paletteHtml(Object.keys(INKS));
   renderSlide(0);
   renderSuggestions();
   renderGrids();
