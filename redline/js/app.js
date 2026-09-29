@@ -1,13 +1,12 @@
 /* =========================================================
-   RED LINE : logique de l'interface
-   - Accueil : hero (slides), suggestions paginées, grilles
+   RED LINE : logique de l'interface (V3 « Mood map »)
+   - Accueil : carte des humeurs, sélection triée par proximité, grilles
    - Détail : playlist ou artiste (#/playlist/id, #/artist/id)
    - Lecteur : lecture simulée (pas encore de fichiers audio)
    ========================================================= */
 
 (() => {
   const $ = (sel) => document.querySelector(sel);
-  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const artistById = Object.fromEntries(ARTISTS.map((a) => [a.id, a]));
   const playlistById = Object.fromEntries(PLAYLISTS.map((p) => [p.id, p]));
@@ -15,30 +14,31 @@
   const toSec = (d) => { const [m, s] = d.split(":").map(Number); return m * 60 + s; };
   const toTime = (sec) => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, "0")}`;
   const pad = (n) => String(n).padStart(2, "0");
+  const pct = (v) => `${Math.round(v * 100)}%`;
   const norm = (s) => s.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
   const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const clamp = (v, a = 0.03, b = 0.97) => Math.min(b, Math.max(a, v));
+  const dist = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+  const avg = (arr) => arr.reduce((s, v) => s + v, 0) / arr.length;
 
-  /* Chaque morceau connaît sa playlist, pour l'afficher et reconstruire la file */
-  const ALL_TRACKS = PLAYLISTS.flatMap((p) =>
-    p.tracks.map((t) => ({ ...t, playlist: p.id, mood: p.mood, ink: p.ink, tags: p.tags, secs: toSec(t.duration) }))
-  );
-  const trackKey = (t) => `${t.playlist}/${t.title}`;
-
-  /* Encres riso : variables CSS --ink / --on, et une 2e encre pour la surimpression */
-  const inkVars = (name) => `--ink:${INKS[name].c};--on:${INKS[name].on}`;
-  const secondInk = (name) => (name === "blue" ? "pink" : "blue");
-  const paletteHtml = (names) => names.map((n) => `<i style="background:${INKS[n].c}"></i>`).join("");
-
-  /* Pseudo-aléatoire stable, pour que les pochettes restent les mêmes */
+  /* Pseudo-aléatoire stable (mêmes positions à chaque visite) */
   const seeded = (str) => {
     let h = 2166136261;
     for (const c of str) h = Math.imul(h ^ c.charCodeAt(0), 16777619);
     return () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0) % 1000) / 1000;
   };
 
+  /* Chaque morceau reçoit une position proche de celle de sa playlist */
+  const ALL_TRACKS = PLAYLISTS.flatMap((p) => p.tracks.map((t) => {
+    const r = seeded(p.id + t.title);
+    return {
+      ...t, playlist: p.id, mood: p.mood, tags: p.tags, secs: toSec(t.duration),
+      pos: { x: clamp(p.pos.x + (r() - 0.5) * 0.14), y: clamp(p.pos.y + (r() - 0.5) * 0.14) }
+    };
+  }));
+  const trackKey = (t) => `${t.playlist}/${t.title}`;
+
   /* ================= TITRES AJUSTÉS ================= */
-  /* La taille CSS (clamp) sert de maximum ; si la ligne la plus longue
-     dépasse le conteneur, on réduit la police juste ce qu'il faut. */
   function fitTitle(h1) {
     if (!h1 || !h1.offsetParent) return;
     h1.style.fontSize = "";
@@ -47,65 +47,123 @@
     const avail = h1.clientWidth;
     if (widest > avail) h1.style.fontSize = `${Math.floor(max * avail / widest)}px`;
   }
-  const fitAll = () => document.querySelectorAll(".big-title").forEach(fitTitle);
 
-  new ResizeObserver(fitAll).observe(document.body);
-  document.fonts.ready.then(fitAll);
+  /* ================= HORLOGE ================= */
+  const clockFmt = new Intl.DateTimeFormat("fr-CH", { hour: "2-digit", minute: "2-digit", weekday: "short", day: "2-digit", month: "2-digit" });
+  const tickClock = () => { $("#clock").textContent = clockFmt.format(new Date()); };
+  tickClock();
+  setInterval(tickClock, 30000);
 
-  /* ================= HERO ================= */
-  let slideIndex = 0;
-  let slideTimer;
+  /* ================= CARTE DES HUMEURS ================= */
+  const map = $("#map");
+  const meEl = $("#map-me");
+  let me = { x: 0.4, y: 0.36 };
+  try {
+    const saved = JSON.parse(localStorage.getItem("redline-me"));
+    if (saved && typeof saved.x === "number") me = { x: clamp(saved.x), y: clamp(saved.y) };
+  } catch (e) { /* stockage indisponible : position par défaut */ }
 
-  function renderSlide(i) {
-    slideIndex = i;
-    const s = HERO_SLIDES[i];
-    $("#hero-slides").innerHTML = `
-      <div class="slide">
-        <h1 class="big-title" style="--i1:${INKS[s.inks[0]].c};--i2:${INKS[s.inks[1]].c}">${s.lines.map((l) => `<span>${esc(l)}</span>`).join("")}</h1>
-        <p class="slide__sub">${esc(s.sub)}</p>
-        ${s.playlist ? `<a class="slide__cta" href="#/playlist/${s.playlist}">▶ Écouter</a>` : ""}
-      </div>`;
-    document.querySelectorAll("#hero-dots button").forEach((b, j) =>
-      b.setAttribute("aria-selected", String(j === i)));
-    fitTitle($("#hero-slides .big-title"));
+  const place = (el, pos) => { el.style.left = `${pos.x * 100}%`; el.style.bottom = `${pos.y * 100}%`; };
+
+  function pointsHtml(highlight = () => false) {
+    return PLAYLISTS.map((p) => `
+      <a class="map__pt${p.pos.x > 0.7 ? " flip" : ""}${highlight(p) ? " is-near" : ""}" href="#/playlist/${p.id}"
+         style="left:${p.pos.x * 100}%;bottom:${p.pos.y * 100}%" data-id="${p.id}">
+        <span>${esc(p.mood)}</span>
+      </a>`).join("");
   }
 
-  function startSlides() {
-    clearInterval(slideTimer);
-    if (!reduceMotion) slideTimer = setInterval(() => renderSlide((slideIndex + 1) % HERO_SLIDES.length), 6000);
+  $("#map-points").innerHTML =
+    ALL_TRACKS.map((t) => `<i class="map__track" style="left:${t.pos.x * 100}%;bottom:${t.pos.y * 100}%"></i>`).join("") +
+    pointsHtml();
+
+  const nearestPlaylist = () => PLAYLISTS.reduce((a, b) => (dist(b.pos, me) < dist(a.pos, me) ? b : a));
+
+  let frame = 0;
+  function onMove() {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(() => {
+      place(meEl, me);
+      const near = nearestPlaylist();
+      $("#ro-energy").textContent = pct(me.y);
+      $("#ro-light").textContent = pct(me.x);
+      $("#ro-mood").textContent = near.mood;
+      $("#ro-cta").href = `#/playlist/${near.id}`;
+      $("#ro-cta").textContent = `Ouvrir ${near.title.slice(0, 2).join(" ").toLowerCase()} →`;
+      meEl.setAttribute("aria-valuenow", Math.round(me.x * 100));
+      meEl.setAttribute("aria-valuetext", `Énergie ${pct(me.y)}, luminosité ${pct(me.x)}, humeur proche : ${near.mood}`);
+      document.querySelectorAll("#map-points .map__pt").forEach((a) =>
+        a.classList.toggle("is-near", a.dataset.id === near.id));
+      suggPage = 0;
+      renderSuggestions();
+      try { localStorage.setItem("redline-me", JSON.stringify(me)); } catch (e) { /* ignoré */ }
+    });
   }
 
-  $("#hero-dots").innerHTML = HERO_SLIDES.map((_, i) =>
-    `<button role="tab" aria-label="Diapositive ${i + 1}" data-i="${i}"></button>`).join("");
-  $("#hero-dots").addEventListener("click", (e) => {
-    const b = e.target.closest("button");
-    if (!b) return;
-    renderSlide(Number(b.dataset.i));
-    startSlides();
+  function moveFromPointer(e) {
+    const r = map.getBoundingClientRect();
+    me = { x: clamp((e.clientX - r.left) / r.width), y: clamp(1 - (e.clientY - r.top) / r.height) };
+    onMove();
+  }
+
+  map.addEventListener("pointerdown", (e) => {
+    if (e.target.closest(".map__pt")) return;
+    e.preventDefault();
+    map.setPointerCapture(e.pointerId);
+    moveFromPointer(e);
+    map.addEventListener("pointermove", moveFromPointer);
+    map.addEventListener("pointerup", () => map.removeEventListener("pointermove", moveFromPointer), { once: true });
+    meEl.focus({ preventScroll: true });
   });
 
-  /* ================= SUGGESTIONS ================= */
-  const PER_PAGE = 4;
+  meEl.addEventListener("keydown", (e) => {
+    const step = e.shiftKey ? 0.1 : 0.02;
+    const d = { ArrowLeft: [-step, 0], ArrowRight: [step, 0], ArrowUp: [0, step], ArrowDown: [0, -step] }[e.key];
+    if (!d) return;
+    e.preventDefault();
+    me = { x: clamp(me.x + d[0]), y: clamp(me.y + d[1]) };
+    onMove();
+  });
+
+  /* ================= SÉLECTION ================= */
+  const PER_PAGE = 6;
+  const MAX_GAP = Math.SQRT2;
   let suggPage = 0;
-  let suggTracks = ALL_TRACKS;
+  let query = "";
+
+  const matchTrack = (t) => !query ||
+    [t.title, t.mood, artistById[t.artist].name, ...t.tags].some((s) => norm(s).includes(query));
+  const ranked = () => ALL_TRACKS.filter(matchTrack)
+    .map((t) => ({ ...t, gap: dist(t.pos, me) }))
+    .sort((a, b) => a.gap - b.gap);
+
+  let suggTracks = [];
 
   function renderSuggestions() {
+    suggTracks = ranked();
     const pages = Math.max(1, Math.ceil(suggTracks.length / PER_PAGE));
     suggPage = Math.min(suggPage, pages - 1);
-    const slice = suggTracks.slice(suggPage * PER_PAGE, suggPage * PER_PAGE + PER_PAGE);
+    const start = suggPage * PER_PAGE;
 
-    $("#sugg-list").innerHTML = slice.map((t, i) => `
-      <li data-key="${esc(trackKey(t))}" style="${inkVars(t.ink)}">
-        <button type="button">
-          <span class="num">${pad(suggPage * PER_PAGE + i + 1)}</span>
-          <span class="swatch" aria-hidden="true"></span>
-          <span class="name">${esc(t.title)}</span>
-          <span class="mood">${esc(t.mood)}</span>
-        </button>
-        <span class="dur">${t.duration}</span>
-      </li>`).join("");
+    $("#sugg-list").innerHTML = suggTracks.slice(start, start + PER_PAGE).map((t, i) => {
+      const close = 1 - Math.min(1, t.gap / (MAX_GAP / 2));
+      return `
+      <tr data-key="${esc(trackKey(t))}" tabindex="0">
+        <td class="c-num">${pad(start + i + 1)}</td>
+        <td><span class="t-title">${esc(t.title)}</span><span class="artist">${esc(artistById[t.artist].name)}</span></td>
+        <td class="c-mood">${esc(t.mood)}</td>
+        <td class="c-n c-gap"><span class="gap-bar" aria-hidden="true"><i style="width:${Math.round(close * 100)}%"></i></span>${Math.round(close * 100)}%</td>
+        <td class="c-n">${t.bpm}</td>
+        <td class="c-n">${t.duration}</td>
+      </tr>`;
+    }).join("");
+
+    // Le rayon pointillé englobe la page de sélection visible
+    const edge = suggTracks[Math.min(start + PER_PAGE, suggTracks.length) - 1];
+    meEl.style.setProperty("--r", edge ? `${edge.gap * 2 * map.clientWidth}px` : "0px");
 
     $("#sugg-empty").hidden = suggTracks.length > 0;
+    $("#sugg-count").textContent = suggTracks.length ? `${suggTracks.length} morceaux, triés par proximité` : "";
     $("#sugg-pager").innerHTML = suggTracks.length > PER_PAGE
       ? Array.from({ length: pages }, (_, i) =>
           `<button aria-label="Page ${i + 1}" data-p="${i}" ${i === suggPage ? 'aria-current="true"' : ""}>${i + 1}</button>`).join("")
@@ -120,43 +178,52 @@
     renderSuggestions();
   });
 
-  $("#sugg-list").addEventListener("click", (e) => {
-    const li = e.target.closest("li");
-    if (!li) return;
-    const i = suggTracks.findIndex((t) => trackKey(t) === li.dataset.key);
-    player.load(suggTracks, i);
-  });
+  /* Clic ou Entrée sur une ligne de tableau = lecture */
+  function bindRows(tbody, getList) {
+    const play = (tr) => {
+      const list = getList();
+      player.load(list, list.findIndex((t) => trackKey(t) === tr.dataset.key));
+    };
+    tbody.addEventListener("click", (e) => { const tr = e.target.closest("tr"); if (tr) play(tr); });
+    tbody.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && e.target.matches("tr")) { e.preventDefault(); play(e.target); }
+    });
+  }
+  bindRows($("#sugg-list"), () => suggTracks);
 
   /* ================= GRILLES ================= */
   function renderGrids(list = PLAYLISTS) {
     $("#playlist-grid").innerHTML = list.map((p) => `
-      <li><a class="card" href="#/playlist/${p.id}" style="${inkVars(p.ink)}">
-        <span class="card__title">${p.title.slice(0, 2).map(esc).join("<br>")}</span>
-        <span class="card__meta">${esc(p.mood)}</span>
+      <li><a class="card" href="#/playlist/${p.id}">
+        <span class="card__top">
+          <span>${pad(PLAYLISTS.indexOf(p) + 1)}</span>
+          <span class="card__plot" aria-hidden="true"><i style="left:${p.pos.x * 100}%;bottom:${p.pos.y * 100}%"></i></span>
+        </span>
+        <span>
+          <span class="card__title">${p.title.slice(0, 2).map(esc).join("<br>")}</span>
+          <span class="card__meta">${esc(p.mood)}, ${Math.round(avg(p.tracks.map((t) => t.bpm)))} BPM</span>
+        </span>
       </a></li>`).join("") || `<li class="empty">Aucune playlist.</li>`;
 
-    $("#artist-grid").innerHTML = ARTISTS.map((a) => `
-      <li><a class="card card--artist" href="#/artist/${a.id}" style="${inkVars(a.ink)}">
-        <span class="card__portrait" aria-hidden="true"></span>
+    $("#artist-grid").innerHTML = ARTISTS.map((a, i) => `
+      <li><a class="card card--artist" href="#/artist/${a.id}">
+        <span class="card__top"><span>${pad(i + 1)}</span><span>${esc(a.genre)}</span></span>
         <span class="card__initials" aria-hidden="true">${a.name.split(" ").map((w) => w[0]).join("")}</span>
         <span class="card__title">${esc(a.name)}</span>
-        <span class="card__meta">${esc(a.genre)}</span>
       </a></li>`).join("");
   }
 
-  /* ================= RECHERCHE MOOD ================= */
+  /* ================= RECHERCHE ================= */
   $("#search-input").addEventListener("input", (e) => {
     if (!$("#view-detail").hidden) location.hash = "#/";
-    const q = norm(e.target.value.trim());
-    const match = (t) => !q || [t.title, t.mood, artistById[t.artist].name, ...t.tags].some((s) => norm(s).includes(q));
-    suggTracks = ALL_TRACKS.filter(match);
+    query = norm(e.target.value.trim());
     suggPage = 0;
     renderSuggestions();
-    renderGrids(PLAYLISTS.filter((p) => !q || [p.mood, ...p.title, ...p.tags].some((s) => norm(s).includes(q))));
+    renderGrids(PLAYLISTS.filter((p) => !query || [p.mood, ...p.title, ...p.tags].some((s) => norm(s).includes(query))));
   });
 
   /* ================= VUE DÉTAIL ================= */
-  const EQ_BARS = 48;
+  const EQ_BARS = 56;
   let eqBars = [];
   let detailTracks = [];
 
@@ -164,58 +231,56 @@
     const r = seeded(seed);
     $("#detail-eq").innerHTML = Array.from({ length: EQ_BARS }, () => "<i></i>").join("");
     eqBars = [...$("#detail-eq").children].map((el) => {
-      const base = 28 + r() * 62;
+      const base = 24 + r() * 66;
       el.style.height = `${base}%`;
       return { el, base, phase: r() * Math.PI * 2, speed: 1.5 + r() * 3 };
     });
   }
 
   function showDetail(kind, id) {
-    let title, desc, tracks, label, ink, kicker;
+    let title, desc, tracks, highlight, stats;
     if (kind === "playlist" && playlistById[id]) {
       const p = playlistById[id];
-      title = p.title; desc = p.desc; label = "PLAYED ON REPEAT"; ink = p.ink;
-      kicker = `Humeur : ${p.mood}`;
+      title = p.title; desc = p.desc;
       tracks = ALL_TRACKS.filter((t) => t.playlist === id);
+      highlight = (q) => q.id === id;
+      stats = [["Humeur", p.mood], ["Énergie", pct(p.pos.y)], ["Luminosité", pct(p.pos.x)]];
     } else if (kind === "artist" && artistById[id]) {
       const a = artistById[id];
-      title = a.name.toUpperCase().split(" "); label = "PLAYED ON REPEAT"; ink = a.ink;
-      kicker = `Artiste : ${a.genre}`;
+      title = a.name.toUpperCase().split(" ");
       tracks = ALL_TRACKS.filter((t) => t.artist === id);
-      desc = `${a.genre}. ${tracks.length} morceaux répartis dans ${new Set(tracks.map((t) => t.mood)).size} humeurs différentes.`;
+      const moods = new Set(tracks.map((t) => t.playlist));
+      desc = `${a.genre}. ${tracks.length} morceaux répartis dans ${moods.size} humeurs : ${[...moods].map((m) => playlistById[m].mood.toLowerCase()).join(", ")}.`;
+      highlight = (q) => moods.has(q.id);
+      stats = [["Genre", a.genre], ["Morceaux", tracks.length], ["Humeurs", moods.size]];
     } else {
       location.hash = "#/";
       return;
     }
 
     detailTracks = tracks;
-    const ink2 = secondInk(ink);
-    $("#view-detail").setAttribute("style", inkVars(ink));
-    $("#detail-kicker").textContent = kicker;
-    $("#detail-palette").innerHTML = paletteHtml([ink, ink2, "yellow"]);
-    $("#detail-title").style.cssText = `--i1:${INKS[ink].c};--i2:${INKS[ink2].c}`;
+    stats.push(["BPM moyen", Math.round(avg(tracks.map((t) => t.bpm)))]);
+
     $("#detail-title").innerHTML = title.map((l) => `<span>${esc(l)}</span>`).join("");
-    $("#detail-desc").textContent = desc;
     fitTitle($("#detail-title"));
-    $("#detail-label").textContent = label;
+    $("#detail-desc").textContent = desc;
+    $("#detail-stats").innerHTML = stats.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(String(v))}</dd></div>`).join("");
+    $("#detail-map").querySelectorAll(".map__pt").forEach((n) => n.remove());
+    $("#detail-map").insertAdjacentHTML("beforeend", pointsHtml(highlight));
     $("#detail-tracks").innerHTML = tracks.map((t, i) => `
-      <li data-key="${esc(trackKey(t))}" style="${inkVars(t.ink)}"><button type="button">
-        <span class="num">A${i + 1}</span>
-        <span>${esc(t.title)}${kind === "playlist" ? `<span class="artist">${esc(artistById[t.artist].name)}</span>` : `<span class="artist">${esc(t.mood)}</span>`}</span>
-        <span class="dur">${t.duration}</span>
-      </button></li>`).join("");
+      <tr data-key="${esc(trackKey(t))}" tabindex="0">
+        <td class="c-num">${pad(i + 1)}</td>
+        <td><span class="t-title">${esc(t.title)}</span><span class="artist">${esc(kind === "playlist" ? artistById[t.artist].name : t.mood)}</span></td>
+        <td class="c-n">${t.bpm}</td>
+        <td class="c-n">${t.duration}</td>
+      </tr>`).join("");
     buildEq(id);
     document.title = `${title.join(" ")} | Red Line`;
     markPlaying();
   }
 
-  $("#detail-tracks").addEventListener("click", (e) => {
-    const li = e.target.closest("li");
-    if (!li) return;
-    player.load(detailTracks, detailTracks.findIndex((t) => trackKey(t) === li.dataset.key));
-  });
+  bindRows($("#detail-tracks"), () => detailTracks);
 
-  /* Égaliseur : bouge quand ça joue, reste figé sinon */
   function animateEq(now) {
     if (player.playing && !$("#view-detail").hidden) {
       const t = now / 1000;
@@ -233,22 +298,20 @@
     const detail = Boolean(kind);
     $("#view-home").hidden = detail;
     $("#view-detail").hidden = !detail;
-    if (detail) {
-      clearInterval(slideTimer);
-      showDetail(kind, id);
-    } else {
-      document.title = "Red Line | Playlists par humeur";
-      startSlides();
-    }
+    if (detail) showDetail(kind, id);
+    else { document.title = "Red Line | Playlists par humeur"; renderSuggestions(); }
     scrollTo({ top: 0, behavior: "instant" });
   }
 
   /* ================= LECTEUR ================= */
+  const SEGMENTS = 48;
   const el = {
-    root: $("#player"), title: $("#player-title"), play: $("#btn-play"),
-    fill: $("#progress-fill"), knob: $("#progress-knob"), bar: $("#progress"),
-    cur: $("#time-cur"), tot: $("#time-tot")
+    root: $("#player"), title: $("#player-title"), meta: $("#player-meta"), play: $("#btn-play"),
+    bar: $("#progress"), cur: $("#time-cur"), tot: $("#time-tot")
   };
+  el.bar.innerHTML = Array.from({ length: SEGMENTS }, (_, i) =>
+    `<i style="height:${35 + Math.abs(Math.sin(i * 1.7)) * 65}%"></i>`).join("");
+  const segs = [...el.bar.children];
 
   const player = {
     queue: [], index: 0, pos: 0, playing: false, last: 0,
@@ -269,8 +332,8 @@
     toggle() { this.playing ? this.pause() : this.play(); },
     next() { this.index = (this.index + 1) % this.queue.length; this.pos = 0; this.render(); },
     prev() {
-      if (this.pos > 3) this.pos = 0;
-      else this.index = (this.index - 1 + this.queue.length) % this.queue.length, this.pos = 0;
+      if (this.pos <= 3) this.index = (this.index - 1 + this.queue.length) % this.queue.length;
+      this.pos = 0;
       this.render();
     },
     seek(ratio) { this.pos = Math.max(0, Math.min(1, ratio)) * this.track.secs; this.renderTime(); },
@@ -287,7 +350,8 @@
     render() {
       const t = this.track;
       if (!t) return;
-      el.title.textContent = `${t.title} - ${artistById[t.artist].name}`;
+      el.title.textContent = t.title;
+      el.meta.textContent = `${artistById[t.artist].name}, ${t.mood}, ${t.bpm} BPM`;
       el.tot.textContent = t.duration;
       el.root.classList.toggle("is-paused", !this.playing);
       el.play.setAttribute("aria-label", this.playing ? "Pause" : "Lecture");
@@ -295,18 +359,19 @@
       markPlaying();
     },
     renderTime() {
-      const pct = (this.pos / this.track.secs) * 100;
-      el.fill.style.width = `${pct}%`;
-      el.knob.style.left = `${pct}%`;
+      const ratio = this.pos / this.track.secs;
+      const lit = Math.round(ratio * SEGMENTS);
+      segs.forEach((s, i) => s.classList.toggle("on", i < lit));
       el.cur.textContent = toTime(this.pos);
-      el.bar.setAttribute("aria-valuenow", Math.round(pct));
+      el.bar.setAttribute("aria-valuenow", Math.round(ratio * 100));
+      el.bar.setAttribute("aria-valuetext", `${toTime(this.pos)} sur ${this.track.duration}`);
     }
   };
 
   function markPlaying() {
     const key = player.track && trackKey(player.track);
-    document.querySelectorAll("[data-key]").forEach((li) =>
-      li.classList.toggle("is-playing", li.dataset.key === key));
+    document.querySelectorAll("[data-key]").forEach((row) =>
+      row.classList.toggle("is-playing", row.dataset.key === key));
   }
 
   (function loop(now) { player.tick(now); requestAnimationFrame(loop); })(performance.now());
@@ -315,7 +380,6 @@
   $("#btn-next").addEventListener("click", () => player.next());
   $("#btn-prev").addEventListener("click", () => player.prev());
 
-  /* Barre de progression : clic, glisser, clavier */
   const ratioAt = (e) => { const r = el.bar.getBoundingClientRect(); return (e.clientX - r.left) / r.width; };
   el.bar.addEventListener("pointerdown", (e) => {
     el.bar.setPointerCapture(e.pointerId);
@@ -329,20 +393,21 @@
     if (step) { e.preventDefault(); player.seek((player.pos + step) / player.track.secs); }
   });
 
-  /* Espace = lecture / pause (hors champ de saisie) */
   document.addEventListener("keydown", (e) => {
-    if (e.code === "Space" && player.track && !e.target.closest("input, button, [role=slider]")) {
+    if (e.code === "Space" && player.track && !e.target.closest("input, button, tr, [role=slider]")) {
       e.preventDefault();
       player.toggle();
     }
   });
 
   /* ================= INIT ================= */
-  $("#home-palette").innerHTML = paletteHtml(Object.keys(INKS));
-  renderSlide(0);
-  renderSuggestions();
+  new ResizeObserver(() => { if (map.clientWidth) renderSuggestions(); }).observe(map);
+  window.addEventListener("resize", () => fitTitle($("#detail-title")));
+  document.fonts.ready.then(() => fitTitle($("#detail-title")));
+
   renderGrids();
   window.addEventListener("hashchange", route);
   route();
+  onMove();
   requestAnimationFrame(animateEq);
 })();
