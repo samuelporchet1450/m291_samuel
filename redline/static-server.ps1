@@ -1,5 +1,5 @@
 param(
-    [string]$RootDir = "C:\Users\Student\Downloads\Redline",
+    [string]$RootDir = $PSScriptRoot,
     [int]$Port = 0
 )
 
