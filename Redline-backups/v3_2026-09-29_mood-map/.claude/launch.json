@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "redline",
+      "runtimeExecutable": "powershell",
+      "runtimeArgs": ["-ExecutionPolicy", "Bypass", "-File", "static-server.ps1", "-RootDir", "C:/Users/Student/Downloads/Redline"],
+      "autoPort": true,
+      "port": 8080
+    }
+  ]
+}
