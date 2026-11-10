@@ -1,22 +1,44 @@
 # M291 — Samuel
-Je suis Sam, j'ai 105 kilos bench et je suis mediamaticien
+Je suis Sam, j'ai 105 kilos bench et je suis **médiamaticien** en 3e année.
+
 ## Ce que je veux apprendre
-- des technique sur photoshop
-- je veux perfectionner ma capacité a m'exprimer envers l'IA
-- faire de bon sites
-## Mon projet 
-Un site pour pouvoir trouver de films selon ses envies
+- des techniques sur **Photoshop**
+- perfectionner ma capacité à m'exprimer envers l'**IA**
+- faire de **bons sites**
+
+## Mon projet : Red Line
+Une appli pour trouver une **playlist selon son humeur** : on choisit comment on se sent, Red Line trouve la musique.
+- App (s09–s13) : [`app/`](app) · Brief : [`brief.md`](brief.md) · Dossier design (note 1) : [`design/`](design)
+- Prototypes des 3 directions artistiques : [`redline/`](redline) et [`Redline-backups/`](Redline-backups)
+
+## Déploiement Web
+- Site en ligne : [Consulter mon profil public](https://samuelporchet1450.github.io/m291_samuel/)
+- App Red Line : [samuelporchet1450.github.io/m291_samuel/app/](https://samuelporchet1450.github.io/m291_samuel/app/)
+- Exercices en ligne : [samuelporchet1450.github.io/m291_samuel/exercices/](https://samuelporchet1450.github.io/m291_samuel/exercices/)
+
+## Classeur
+| Dossier | Contenu |
+| :--- | :--- |
+| [`exercices/`](exercices) | Tous les exercices, semaine par semaine (s01 → s13) |
+| [`design/`](design) | Roast, persona, flow, wireframes, critique, audits d'accessibilité |
+| [`app/`](app) | Le projet Red Line : `index.html`, `style.css`, `app.js`, `data.json` |
+| [`revision/`](revision) | Fiches de révision de la théorie + tests blancs (note 2) + préparation de l'entretien (note 3) |
+
 ## Comment me trouver
 - GitHub : samuelporchet1450
 
-## Mes sites préféré
-- [youtube](www.youtube.com)
-- [pinterest](www.pinterest.com)
-- [purestream](www.purestream.club)
+## Mes sites préférés
+- [youtube](https://www.youtube.com)
+- [pinterest](https://www.pinterest.com)
+- [purestream](https://www.purestream.club)
 
 ## Un film que j'aime
 J'aime *Fight Club* pour son histoire intense, son ambiance sombre et sa réflexion sur la société et l'identité.
 
+## Journal d'Assistance IA (Note 3)
+1. **Exercices s01–s13, dossier design et fiches de révision :** outil utilisé **Claude (Claude Code)**. Prompt : « Réalise et publie tous les exercices du dossier, puis fais un dossier de révision avec la théorie. » Ce que j'ai vérifié / corrigé à la main : _à compléter_.
+2. **Prompt 2 :** _outil · prompt · anomalie détectée · ma correction manuelle_
+3. **Prompt 3 :** _outil · prompt · anomalie détectée · ma correction manuelle_
 
-
- _Repo cloné et ouvert dans VS Code._
+---
+_Environnement de travail local configuré avec succès dans Visual Studio Code._
