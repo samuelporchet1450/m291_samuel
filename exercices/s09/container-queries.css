@@ -1,0 +1,36 @@
+/* s09-av1 — Carte de playlist qui s'adapte à SON conteneur (pas à la fenêtre) */
+
+.zone-cartes {
+  container-type: inline-size;   /* ce bloc devient un « contexte de conteneur » */
+  container-name: zone;
+}
+
+.carte-cq {
+  display: grid;
+  grid-template-columns: 1fr;    /* étroit : pochette au-dessus, texte dessous */
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1.5px solid #0d0d0d;
+  border-radius: 6px;
+  background: #fff;
+}
+.carte-cq__pochette {
+  aspect-ratio: 1;
+  background: #d4ff3a;
+  border: 1.5px solid #0d0d0d;
+}
+.carte-cq__titre { margin: 0; font-size: 1.125rem; }
+.carte-cq__meta { margin: 0; color: #5f5f5b; font-size: 0.875rem; }
+
+/* Dès que le CONTENEUR fait 400 px ou plus : disposition horizontale */
+@container zone (min-width: 400px) {
+  .carte-cq {
+    grid-template-columns: 7rem 1fr;
+    align-items: center;
+  }
+}
+
+/* Encore plus large : titre plus grand */
+@container zone (min-width: 640px) {
+  .carte-cq__titre { font-size: 1.5rem; }
+}

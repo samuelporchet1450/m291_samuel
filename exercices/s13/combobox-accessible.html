@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>e3-6 / s13-av1 — Autocomplétion accessible (combobox ARIA)</title>
+  <style>
+    :root {
+      --color-primary: #0369a1;
+      --color-border: #64748b;
+      --color-bg-hover: #e0f2fe;
+      --font-sans: system-ui, sans-serif;
+    }
+    body { font-family: var(--font-sans); padding: 2rem 1rem; color: #0f172a; }
+    .combobox-wrapper { position: relative; max-width: 400px; }
+    .combobox-label { display: block; font-weight: 600; margin-bottom: 0.5rem; }
+    .combobox-input { width: 100%; min-height: 44px; padding: 12px; font-size: 1rem; border: 2px solid var(--color-border); border-radius: 6px; box-sizing: border-box; }
+    .combobox-input:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; }
+    .suggestions-list { position: absolute; top: 100%; left: 0; right: 0; background: white; border: 2px solid var(--color-border); border-radius: 6px; margin-top: 4px; padding: 0; list-style: none; box-shadow: 0 4px 6px rgba(0,0,0,0.1); max-height: 240px; overflow-y: auto; z-index: 10; }
+    .suggestion-item { padding: 10px 12px; min-height: 44px; box-sizing: border-box; cursor: pointer; }
+    .suggestion-item[aria-selected="true"], .suggestion-item:hover { background-color: var(--color-bg-hover); color: var(--color-primary); font-weight: 600; }
+    .suggestion-item[aria-selected="true"]::before { content: "→ "; }
+    .suggestion-item mark { background: none; color: inherit; text-decoration: underline; font-weight: 700; }
+    .suggestion-vide { padding: 10px 12px; color: #475569; font-style: italic; }
+    .aide { color: #475569; font-size: .9rem; max-width: 400px; }
+    #annonce { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  </style>
+</head>
+<body>
+  <h1>Recherche de communes suisses</h1>
+  <p class="aide">Tapez « lau » puis utilisez ↓ ↑, Entrée pour choisir, Échap pour fermer.</p>
+
+  <div class="combobox-wrapper" id="recherche-combobox">
+    <label for="recherche-input" class="combobox-label">Rechercher une destination :</label>
+    <input
+      type="text"
+      id="recherche-input"
+      role="combobox"
+      aria-expanded="false"
+      aria-autocomplete="list"
+      aria-controls="suggestions-list"
+      autocomplete="off"
+      class="combobox-input"
+      placeholder="Ex : Lausanne, Vevey, Montreux…"
+    >
+    <ul id="suggestions-list" role="listbox" aria-label="Suggestions" class="suggestions-list" hidden></ul>
+  </div>
+  <p id="annonce" aria-live="polite"></p>
+  <p id="choix" role="status"></p>
+
+  <script>
+    // Données intégrées (le fichier de départ chargeait villes.json avec fetch)
+    const listeVilles = [
+      "Aigle", "Bulle", "Château-d'Œx", "Fribourg", "Genève", "Grandson",
+      "La Chaux-de-Fonds", "Lausanne", "Lauterbrunnen", "Montreux", "Morges",
+      "Neuchâtel", "Nyon", "Payerne", "Sion", "Vevey", "Yverdon-les-Bains"
+    ];
+
+    const wrapper = document.getElementById("recherche-combobox");
+    const input = document.getElementById("recherche-input");
+    const listbox = document.getElementById("suggestions-list");
+    const annonce = document.getElementById("annonce");
+    let activeIndex = -1;
+
+    // 1. Debounce : on attend 200 ms après la dernière frappe
+    function debounce(fonction, delai) {
+      let timer;
+      return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fonction.apply(this, args), delai);
+      };
+    }
+
+    // Comparaison sans accents ni majuscules (« neuch » trouve « Neuchâtel »)
+    function normaliser(texte) {
+      return texte.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+    }
+
+    // 2. Ouvrir / fermer en gardant aria-expanded synchronisé
+    function ouvrirSuggestions() {
+      listbox.hidden = false;
+      input.setAttribute("aria-expanded", "true");
+    }
+    function fermerSuggestions() {
+      listbox.hidden = true;
+      input.setAttribute("aria-expanded", "false");
+      input.removeAttribute("aria-activedescendant");
+      activeIndex = -1;
+    }
+
+    // 3. Filtrer et construire les options
+    function afficherSuggestions() {
+      const saisie = normaliser(input.value.trim());
+      listbox.textContent = "";
+      activeIndex = -1;
+      input.removeAttribute("aria-activedescendant");
+
+      if (saisie.length === 0) {
+        fermerSuggestions();
+        return;
+      }
+
+      const resultats = listeVilles.filter((ville) => normaliser(ville).includes(saisie));
+
+      if (resultats.length === 0) {
+        const vide = document.createElement("li");
+        vide.className = "suggestion-vide";
+        vide.textContent = "Aucune commune trouvée";
+        listbox.append(vide);
+        annonce.textContent = "Aucune suggestion";
+        ouvrirSuggestions();
+        return;
+      }
+
+      resultats.forEach((ville, i) => {
+        const option = document.createElement("li");
+        option.id = "option-" + i;
+        option.className = "suggestion-item";
+        option.setAttribute("role", "option");
+        option.setAttribute("aria-selected", "false");
+        // Mettre en évidence la partie tapée (sans innerHTML)
+        const debut = normaliser(ville).indexOf(saisie);
+        option.append(ville.slice(0, debut));
+        const mark = document.createElement("mark");
+        mark.textContent = ville.slice(debut, debut + saisie.length);
+        option.append(mark, ville.slice(debut + saisie.length));
+        option.addEventListener("mousedown", (e) => {
+          e.preventDefault(); // garde le focus dans le champ
+          choisir(ville);
+        });
+        listbox.append(option);
+      });
+      annonce.textContent = resultats.length + " suggestion" + (resultats.length > 1 ? "s" : "") + ", flèches pour parcourir";
+      ouvrirSuggestions();
+    }
+
+    function choisir(ville) {
+      input.value = ville;
+      fermerSuggestions();
+      document.getElementById("choix").textContent = "Destination choisie : " + ville;
+    }
+
+    // 4. Mettre à jour l'option active (visuel + ARIA)
+    function majFocusOption(options) {
+      options.forEach((opt, i) => opt.setAttribute("aria-selected", String(i === activeIndex)));
+      const active = options[activeIndex];
+      input.setAttribute("aria-activedescendant", active.id);
+      active.scrollIntoView({ block: "nearest" });
+    }
+
+    input.addEventListener("input", debounce(afficherSuggestions, 200));
+
+    // 5. Clavier : flèches, Entrée, Échap
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Escape") {
+        fermerSuggestions();
+        return;
+      }
+      const options = listbox.querySelectorAll('[role="option"]');
+      if (e.key === "ArrowDown" && listbox.hidden && input.value.trim()) {
+        afficherSuggestions(); // rouvrir avec la flèche
+        return;
+      }
+      if (options.length === 0 || listbox.hidden) return;
+
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        activeIndex = (activeIndex + 1) % options.length;
+        majFocusOption(options);
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        activeIndex = (activeIndex - 1 + options.length) % options.length;
+        majFocusOption(options);
+      } else if (e.key === "Enter" && activeIndex >= 0) {
+        e.preventDefault();
+        choisir(options[activeIndex].textContent);
+      }
+    });
+
+    // 6. Clic en dehors : on ferme
+    document.addEventListener("click", function (e) {
+      if (!wrapper.contains(e.target)) fermerSuggestions();
+    });
+  </script>
+</body>
+</html>

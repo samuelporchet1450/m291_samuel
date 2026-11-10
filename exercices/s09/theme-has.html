@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>s09-av2 — :has() sans JavaScript</title>
+  <style>
+    :root { --fond: #f7f7f5; --encre: #0d0d0d; --acide: #d4ff3a; --carte: #fff; }
+    /* Thème sombre piloté par une case à cocher, sans JS */
+    body:has(#theme-sombre:checked) { --fond: #0a0a0c; --encre: #f3efe8; --carte: #141417; }
+    body { margin: 0; padding: 1.5rem; font-family: system-ui, sans-serif; background: var(--fond); color: var(--encre); transition: background-color .2s, color .2s; }
+    .grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(14rem, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .carte { padding: 1rem; background: var(--carte); border: 1.5px solid var(--encre); border-radius: 6px; transition: background-color .2s, box-shadow .2s; }
+    .carte h2 { margin: 0 0 .5rem; font-size: 1.125rem; }
+    label { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; cursor: pointer; font-weight: 600; }
+    input[type="checkbox"] { width: 1.25rem; height: 1.25rem; accent-color: var(--encre); }
+
+    /* LE cœur de l'exercice : le parent change selon l'état d'un enfant */
+    .carte:has(.toggle-favori:checked) {
+      background: var(--acide);
+      color: #0d0d0d;
+      border-width: 3px;
+      box-shadow: 4px 4px 0 var(--encre);
+    }
+    .carte:has(.toggle-favori:checked) .etiquette::after { content: " ★ favori"; }
+    .carte:has(.toggle-favori:focus-visible) { outline: 3px solid var(--encre); outline-offset: 3px; }
+
+    /* Bonus : compteur visible si au moins un favori */
+    .resume { display: none; font-weight: 700; }
+    body:has(.toggle-favori:checked) .resume { display: block; }
+    @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+  </style>
+</head>
+<body>
+  <h1>Favoris avec <code>:has()</code></h1>
+  <label><input type="checkbox" id="theme-sombre"> Thème sombre</label>
+  <p class="resume">Tu as au moins un favori.</p>
+  <div class="grille">
+    <article class="carte"><h2>Red Line Session</h2><p class="etiquette">Nuit blanche</p><label><input type="checkbox" class="toggle-favori"> Favori</label></article>
+    <article class="carte"><h2>Pluie sur Ouchy</h2><p class="etiquette">Mélancolie</p><label><input type="checkbox" class="toggle-favori"> Favori</label></article>
+    <article class="carte"><h2>Paléo dans la tête</h2><p class="etiquette">Euphorie</p><label><input type="checkbox" class="toggle-favori"> Favori</label></article>
+  </div>
+  <p><small>Zéro ligne de JavaScript sur cette page.</small></p>
+</body>
+</html>

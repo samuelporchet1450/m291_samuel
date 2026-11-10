@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Red Line — Playlists par humeur</title>
+  <meta name="description" content="Trouve une playlist qui colle à ton humeur, en deux gestes.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <a class="lien-evitement" href="#contenu">Aller au contenu</a>
+
+  <header class="entete">
+    <p class="logo"><span class="logo__trait" aria-hidden="true"></span>Red Line</p>
+    <nav aria-label="Navigation principale">
+      <ul class="nav">
+        <li><a href="#playlists" class="nav__lien" aria-current="page">Playlists</a></li>
+        <li><a href="#proposer" class="nav__lien">Proposer</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main id="contenu">
+    <section class="hero">
+      <h1>Comment tu te sens&nbsp;?</h1>
+      <p class="hero__intro">Choisis une humeur, Red Line trouve la musique.</p>
+    </section>
+
+    <!-- s12 : recherche + filtres -->
+    <section class="filtres" aria-label="Recherche et filtres">
+      <div class="champ">
+        <label for="recherche" class="champ__label">Rechercher une playlist</label>
+        <input type="search" id="recherche" class="champ__input" placeholder="Ex. nuit, piano, sport…" autocomplete="off">
+      </div>
+
+      <fieldset class="humeurs">
+        <legend class="champ__label">Humeur</legend>
+        <div class="humeurs__liste" id="humeurs">
+          <button type="button" class="puce" data-humeur="toutes" aria-pressed="true">Toutes</button>
+          <button type="button" class="puce" data-humeur="calme" aria-pressed="false">Calme</button>
+          <button type="button" class="puce" data-humeur="nuit blanche" aria-pressed="false">Nuit blanche</button>
+          <button type="button" class="puce" data-humeur="mélancolie" aria-pressed="false">Mélancolie</button>
+          <button type="button" class="puce" data-humeur="nostalgie" aria-pressed="false">Nostalgie</button>
+          <button type="button" class="puce" data-humeur="euphorie" aria-pressed="false">Euphorie</button>
+          <button type="button" class="puce" data-humeur="colère froide" aria-pressed="false">Colère froide</button>
+        </div>
+      </fieldset>
+
+      <div class="options">
+        <label class="case"><input type="checkbox" id="filtre-nouveau"> Seulement les nouveautés</label>
+        <label class="tri">Trier
+          <select id="tri">
+            <option value="id">par défaut</option>
+            <option value="energie-desc">énergie ↓</option>
+            <option value="energie-asc">énergie ↑</option>
+            <option value="minutes-asc">durée ↑</option>
+          </select>
+        </label>
+      </div>
+    </section>
+
+    <!-- s11 : les cartes viennent de data.json -->
+    <section id="playlists" class="playlists" aria-labelledby="titre-playlists">
+      <h2 id="titre-playlists" class="section-titre">Ta sélection</h2>
+      <p id="etat" class="etat" role="status"></p>
+      <div id="liste-cartes" class="grille"></div>
+    </section>
+
+    <!-- s12 : formulaire sans rechargement -->
+    <section id="proposer" class="proposer" aria-labelledby="titre-proposer">
+      <h2 id="titre-proposer" class="section-titre">Proposer une playlist</h2>
+      <form id="form-proposition" class="formulaire" novalidate>
+        <div class="champ">
+          <label for="champ-titre" class="champ__label">Titre de la playlist</label>
+          <input type="text" id="champ-titre" class="champ__input" aria-describedby="erreur-titre" autocomplete="off">
+          <p id="erreur-titre" class="champ__erreur" hidden></p>
+        </div>
+
+        <div class="champ">
+          <label for="champ-humeur" class="champ__label">Humeur</label>
+          <select id="champ-humeur" class="champ__input" aria-describedby="erreur-humeur">
+            <option value="">— Choisis une humeur —</option>
+            <option value="calme">Calme</option>
+            <option value="nuit blanche">Nuit blanche</option>
+            <option value="mélancolie">Mélancolie</option>
+            <option value="nostalgie">Nostalgie</option>
+            <option value="euphorie">Euphorie</option>
+            <option value="colère froide">Colère froide</option>
+          </select>
+          <p id="erreur-humeur" class="champ__erreur" hidden></p>
+        </div>
+
+        <div class="champ">
+          <label for="champ-energie" class="champ__label">Énergie : <output id="valeur-energie" for="champ-energie">50</output> %</label>
+          <input type="range" id="champ-energie" min="0" max="100" value="50" class="curseur">
+        </div>
+
+        <div class="champ">
+          <label for="champ-tags" class="champ__label">Mots-clés <span class="champ__aide">(séparés par des virgules, 1 à 3)</span></label>
+          <input type="text" id="champ-tags" class="champ__input" placeholder="Ex. pluie, piano" aria-describedby="erreur-tags" autocomplete="off">
+          <p id="erreur-tags" class="champ__erreur" hidden></p>
+        </div>
+
+        <button type="submit" class="bouton">Envoyer la proposition</button>
+        <p id="confirmation" class="confirmation" role="status" hidden></p>
+      </form>
+    </section>
+  </main>
+
+  <!-- Fiche détaillée -->
+  <dialog id="detail" class="detail" aria-labelledby="detail-titre">
+    <button type="button" class="detail__fermer" id="detail-fermer" aria-label="Fermer la fiche">✕</button>
+    <p class="detail__humeur" id="detail-humeur"></p>
+    <h2 id="detail-titre" class="detail__titre"></h2>
+    <p id="detail-description"></p>
+    <dl class="detail__stats">
+      <div><dt>Énergie</dt><dd id="detail-energie"></dd></div>
+      <div><dt>Luminosité</dt><dd id="detail-luminosite"></dd></div>
+      <div><dt>Morceaux</dt><dd id="detail-morceaux"></dd></div>
+      <div><dt>Durée</dt><dd id="detail-minutes"></dd></div>
+    </dl>
+    <p class="detail__tags" id="detail-tags"></p>
+    <button type="button" class="bouton" id="detail-lire">▶ Lire</button>
+  </dialog>
+
+  <footer class="pied">
+    <p>© 2026 — Sam · Projet ICT 291 · Données inventées</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

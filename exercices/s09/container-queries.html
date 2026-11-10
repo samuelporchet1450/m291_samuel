@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>s09-av1 — Container queries</title>
+  <link rel="stylesheet" href="container-queries.css">
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 0; padding: 1.5rem; background: #f7f7f5; color: #0d0d0d; }
+    .mise-en-page { display: grid; grid-template-columns: 1fr; gap: 1.5rem; }
+    @media (min-width: 900px) { .mise-en-page { grid-template-columns: 260px 1fr; } }
+    h2 { font-size: 0.875rem; text-transform: uppercase; letter-spacing: .05em; }
+  </style>
+</head>
+<body>
+  <h1>La même carte, deux conteneurs</h1>
+  <p>Élargissez la fenêtre : la carte de la colonne étroite reste verticale, celle de la zone large passe à l'horizontale. C'est le conteneur qui décide, pas l'écran.</p>
+  <div class="mise-en-page">
+    <aside>
+      <h2>Colonne latérale (260 px)</h2>
+      <div class="zone-cartes">
+        <article class="carte-cq">
+          <div class="carte-cq__pochette" aria-hidden="true"></div>
+          <div><h3 class="carte-cq__titre">Brume du Jura</h3><p class="carte-cq__meta">Calme · 9 morceaux</p></div>
+        </article>
+      </div>
+    </aside>
+    <section>
+      <h2>Zone principale</h2>
+      <div class="zone-cartes">
+        <article class="carte-cq">
+          <div class="carte-cq__pochette" aria-hidden="true"></div>
+          <div><h3 class="carte-cq__titre">Brume du Jura</h3><p class="carte-cq__meta">Calme · 9 morceaux</p></div>
+        </article>
+      </div>
+    </section>
+  </div>
+</body>
+</html>

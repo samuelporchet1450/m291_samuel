@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>s12-av2 — Filtres croisés</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 0 auto; padding: 1.5rem 1rem; color: #0f172a; }
+    form { display: grid; gap: 1rem; padding: 1rem; border: 1px solid #94a3b8; border-radius: 8px; }
+    label { display: grid; gap: .25rem; font-weight: 600; }
+    input, select { font: inherit; min-height: 44px; padding: 0 .5rem; }
+    #compteur { font-weight: 700; margin-top: 1rem; }
+    li { padding: .4rem 0; border-bottom: 1px solid #e2e8f0; }
+  </style>
+</head>
+<body>
+  <h1>Lieux romands — 3 filtres cumulés</h1>
+  <form onsubmit="return false">
+    <label>Texte (titre ou commune) <input id="f-texte" type="search" placeholder="Ex. lac, Genève"></label>
+    <label>Catégorie
+      <select id="f-tag"><option value="tous">Toutes</option><option value="lac">Lac</option><option value="patrimoine">Patrimoine</option><option value="table">Table</option></select>
+    </label>
+    <label>Prix maximum : <span><output id="f-prix-valeur">50</output> CHF</span>
+      <input id="f-prix" type="range" min="0" max="50" value="50">
+    </label>
+  </form>
+  <p id="compteur" role="status"></p>
+  <ul id="resultats"></ul>
+  <script src="filtres-croises.js"></script>
+</body>
+</html>

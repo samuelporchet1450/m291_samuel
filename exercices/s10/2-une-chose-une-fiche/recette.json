@@ -1,0 +1,8 @@
+{
+  "id": 1,
+  "nom": "Taboulé",
+  "personnes": 4,
+  "minutes": 20,
+  "vegetarien": true,
+  "difficulte": "facile"
+}

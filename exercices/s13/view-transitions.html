@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>s13-av2 — View Transitions</title>
+  <style>
+    :root { --fond: #f7f7f5; --encre: #0d0d0d; --acide: #d4ff3a; }
+    body { margin: 0; padding: 1.5rem 1rem; font-family: system-ui, sans-serif; background: var(--fond); color: var(--encre); }
+    .barre { display: flex; flex-wrap: wrap; gap: .5rem; margin: 1rem 0; }
+    button { min-height: 44px; padding: 0 1rem; font: inherit; font-weight: 700; background: #fff; border: 1.5px solid var(--encre); border-radius: 999px; cursor: pointer; }
+    button[aria-pressed="true"] { background: var(--acide); }
+    button[aria-pressed="true"]::before { content: "✓ "; }
+    .grille { display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: 1rem; list-style: none; padding: 0; }
+    .carte { padding: 1rem; background: #fff; border: 1.5px solid var(--encre); border-radius: 6px; }
+    .carte h2 { margin: 0 0 .25rem; font-size: 1rem; }
+    .carte p { margin: 0; font-family: ui-monospace, monospace; font-size: .8rem; }
+
+    /* Personnalisation des transitions : l'ancien état sort, le nouveau entre */
+    ::view-transition-old(root) { animation: 180ms ease-in both sortie; }
+    ::view-transition-new(root) { animation: 260ms cubic-bezier(.2,.8,.2,1) both entree; }
+    /* Chaque carte a son propre view-transition-name (posé en JS) :
+       le navigateur la fait glisser de son ancienne à sa nouvelle place. */
+    ::view-transition-group(*) { animation-duration: 300ms; }
+
+    @keyframes sortie { to { opacity: 0; } }
+    @keyframes entree { from { opacity: 0; transform: translateY(6px); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      ::view-transition-group(*), ::view-transition-old(*), ::view-transition-new(*) { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Trier et filtrer en douceur</h1>
+  <p id="support" role="status"></p>
+  <div class="barre" role="group" aria-label="Tri">
+    <button type="button" data-tri="titre" aria-pressed="true">A → Z</button>
+    <button type="button" data-tri="energie" aria-pressed="false">Énergie ↓</button>
+  </div>
+  <div class="barre" role="group" aria-label="Filtre">
+    <button type="button" data-filtre="toutes" aria-pressed="true">Toutes</button>
+    <button type="button" data-filtre="calme" aria-pressed="false">Calme</button>
+    <button type="button" data-filtre="nuit blanche" aria-pressed="false">Nuit blanche</button>
+  </div>
+  <ul class="grille" id="grille"></ul>
+
+  <script>
+    const playlists = [
+      { id: 1, titre: "Red Line Session", humeur: "nuit blanche", energie: 42 },
+      { id: 5, titre: "Brume du Jura", humeur: "calme", energie: 15 },
+      { id: 7, titre: "Dernier train", humeur: "nuit blanche", energie: 30 },
+      { id: 23, titre: "Tisane et plaid", humeur: "calme", energie: 10 },
+      { id: 4, titre: "Paléo dans la tête", humeur: "euphorie", energie: 92 },
+      { id: 8, titre: "Néons du Flon", humeur: "nuit blanche", energie: 64 },
+      { id: 25, titre: "Lavaux au ralenti", humeur: "calme", energie: 20 },
+      { id: 12, titre: "Salle de muscu", humeur: "colère froide", energie: 95 }
+    ];
+    const etat = { tri: "titre", filtre: "toutes" };
+    const grille = document.getElementById("grille");
+
+    function rendre() {
+      grille.textContent = "";
+      playlists
+        .filter((p) => etat.filtre === "toutes" || p.humeur === etat.filtre)
+        .sort((a, b) => etat.tri === "titre" ? a.titre.localeCompare(b.titre, "fr") : b.energie - a.energie)
+        .forEach((p) => {
+          const li = document.createElement("li");
+          li.className = "carte";
+          li.style.viewTransitionName = "carte-" + p.id; // nom unique par carte
+          const h2 = document.createElement("h2");
+          h2.textContent = p.titre;
+          const meta = document.createElement("p");
+          meta.textContent = p.humeur + " · énergie " + p.energie;
+          li.append(h2, meta);
+          grille.append(li);
+        });
+    }
+
+    // 1. Repli gracieux : sans support, on met juste à jour le DOM
+    function avecTransition(miseAJour) {
+      if (!document.startViewTransition) {
+        miseAJour();
+        return;
+      }
+      // 2. Le navigateur photographie l'avant, on change le DOM, il anime vers l'après
+      document.startViewTransition(miseAJour);
+    }
+
+    document.getElementById("support").textContent = document.startViewTransition
+      ? "Votre navigateur gère les View Transitions."
+      : "Pas de View Transitions ici : la liste change sans animation (repli).";
+
+    document.querySelectorAll(".barre").forEach((barre) => {
+      barre.addEventListener("click", (e) => {
+        const bouton = e.target.closest("button");
+        if (!bouton) return;
+        barre.querySelectorAll("button").forEach((b) => b.setAttribute("aria-pressed", String(b === bouton)));
+        if (bouton.dataset.tri) etat.tri = bouton.dataset.tri;
+        if (bouton.dataset.filtre) etat.filtre = bouton.dataset.filtre;
+        avecTransition(rendre);
+      });
+    });
+
+    rendre();
+  </script>
+</body>
+</html>

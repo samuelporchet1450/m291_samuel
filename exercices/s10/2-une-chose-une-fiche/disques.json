@@ -1,0 +1,18 @@
+[
+  {
+    "id": 1,
+    "titre": "Lumières du Léman",
+    "artistes": ["Les Voix du Jorat"],
+    "annee": 2019,
+    "morceaux": 11,
+    "vinyle": true
+  },
+  {
+    "id": 2,
+    "titre": "Deux rives",
+    "artistes": ["Léa Rochat", "Marco Bernasconi"],
+    "annee": 2023,
+    "morceaux": 9,
+    "vinyle": false
+  }
+]

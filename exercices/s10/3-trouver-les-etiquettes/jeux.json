@@ -1,0 +1,5 @@
+[
+  { "id": 1, "nom": "Les Colons du Lavaux", "joueursMin": 3, "joueursMax": 5, "ageMin": 10, "minutes": 75, "disponible": true },
+  { "id": 2, "nom": "Funi-Express", "joueursMin": 2, "joueursMax": 6, "ageMin": 8, "minutes": 30, "disponible": false },
+  { "id": 3, "nom": "Brouillard sur le Jura", "joueursMin": 1, "joueursMax": 4, "ageMin": 12, "minutes": 45, "disponible": true }
+]
