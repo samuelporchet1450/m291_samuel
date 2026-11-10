@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Médiamatique — ICT 291 — Sam</title>
+  <style>
+    :root {
+      --font-main: system-ui, -apple-system, sans-serif;
+      --color-bg: #f8fafc;
+      --color-card: #ffffff;
+      --color-text: #1e293b;
+      --color-title: #0f172a;
+      --color-primary: #b91c1c;
+      --color-primary-bg: #fee2e2;
+      --color-border: #e2e8f0;
+      --radius-card: 0.75rem;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: var(--font-main);
+      line-height: 1.6;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem 1rem;
+      color: var(--color-text);
+      background-color: var(--color-bg);
+    }
+    header { border-bottom: 2px solid var(--color-border); padding-bottom: 1.5rem; margin-bottom: 2rem; }
+    h1 { color: var(--color-title); margin-bottom: 0.5rem; }
+    .badge { display: inline-block; background: var(--color-primary-bg); color: var(--color-primary); padding: 0.25rem 0.75rem; border-radius: 9999px; font-size: 0.875rem; font-weight: 600; }
+    .card { background: var(--color-card); padding: 1.5rem; border-radius: var(--radius-card); box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+    a { color: var(--color-primary); }
+    a:focus-visible { outline: 3px solid var(--color-primary); outline-offset: 2px; }
+    ul { padding-left: 1.2rem; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="badge">ICT 291 · Interfaces Utilisateurs</span>
+    <h1>Atelier Numérique de Sam</h1>
+    <p>Apprenti médiamaticien en 3e année · Suisse romande</p>
+  </header>
+  <main>
+    <section class="card">
+      <h2>Compétences &amp; Aspirations</h2>
+      <p>Bienvenue sur mon espace de développement d'interfaces. Au cours de ce semestre, j'explore
+        l'intégration web moderne, le prototypage ergonomique et le dialogue critique avec
+        l'intelligence artificielle générative.</p>
+      <ul>
+        <li>Mieux maîtriser Photoshop et la retouche</li>
+        <li>Formuler des prompts précis pour l'IA</li>
+        <li>Concevoir des sites clairs, accessibles et responsives</li>
+      </ul>
+    </section>
+    <section class="card">
+      <h2>Mon projet : Red Line</h2>
+      <p>Une application qui propose des playlists selon l'humeur du moment : on choisit une ambiance,
+        l'appli trouve la musique.</p>
+      <p><a href="redline/">Voir le prototype Red Line</a></p>
+    </section>
+    <section class="card">
+      <h2>Mes exercices</h2>
+      <p>Tous les exercices du module, semaine par semaine : <a href="exercices/">ouvrir le classeur</a>.</p>
+      <p>Mes fiches de révision : <a href="https://github.com/samuelporchet1450/m291_samuel/tree/main/revision">dossier revision/</a>.</p>
+    </section>
+  </main>
+</body>
+</html>
