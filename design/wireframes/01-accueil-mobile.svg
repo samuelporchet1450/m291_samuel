@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844" font-family="Arial, sans-serif">
+  <title>Wireframe 01 — Accueil mobile (390 px)</title>
+  <rect width="390" height="844" fill="#fff" stroke="#000" stroke-width="2"/>
+  <!-- En-tête -->
+  <rect x="0" y="0" width="390" height="64" fill="#eee"/>
+  <text x="16" y="40" font-size="20" font-weight="bold" fill="#000">RED LINE</text>
+  <rect x="330" y="10" width="44" height="44" fill="none" stroke="#666" stroke-width="2"/>
+  <text x="338" y="38" font-size="12" fill="#333">menu</text>
+  <!-- Recherche -->
+  <rect x="16" y="80" width="358" height="48" fill="#fff" stroke="#333" stroke-width="2" rx="4"/>
+  <text x="32" y="110" font-size="14" fill="#777">🔍 Chercher une humeur…</text>
+  <!-- Titre -->
+  <text x="16" y="164" font-size="18" font-weight="bold" fill="#000">Où tu te situes ce soir ?</text>
+  <text x="16" y="186" font-size="12" fill="#555">Glisse le point sur la carte.</text>
+  <!-- Carte des humeurs -->
+  <rect x="16" y="200" width="358" height="280" fill="#f4f4f4" stroke="#333" stroke-width="2"/>
+  <line x1="195" y1="200" x2="195" y2="480" stroke="#999" stroke-dasharray="6 4"/>
+  <line x1="16" y1="340" x2="374" y2="340" stroke="#999" stroke-dasharray="6 4"/>
+  <text x="170" y="218" font-size="11" fill="#444">Énergie +</text>
+  <text x="170" y="474" font-size="11" fill="#444">Énergie −</text>
+  <text x="22" y="336" font-size="11" fill="#444">Sombre</text>
+  <text x="318" y="336" font-size="11" fill="#444">Lumineux</text>
+  <circle cx="90" cy="260" r="6" fill="#999"/><circle cx="300" cy="250" r="6" fill="#999"/>
+  <circle cx="120" cy="420" r="6" fill="#999"/><circle cx="280" cy="410" r="6" fill="#999"/>
+  <circle cx="150" cy="370" r="14" fill="#000"/>
+  <text x="168" y="392" font-size="11" fill="#000">toi</text>
+  <!-- Lecture des valeurs -->
+  <text x="16" y="508" font-size="12" fill="#333">Énergie 35 % · Luminosité 30 % · Humeur : Nuit blanche</text>
+  <rect x="16" y="520" width="358" height="48" fill="#ccc" stroke="#000" stroke-width="2"/>
+  <text x="120" y="550" font-size="14" font-weight="bold" fill="#000">Ouvrir la playlist →</text>
+  <!-- Ta sélection : cartes mono-colonne -->
+  <text x="16" y="600" font-size="16" font-weight="bold" fill="#000">Ta sélection</text>
+  <g>
+    <rect x="16" y="612" width="358" height="72" fill="#fff" stroke="#333" stroke-width="2"/>
+    <rect x="24" y="620" width="56" height="56" fill="#ddd" stroke="#666"/><line x1="24" y1="620" x2="80" y2="676" stroke="#666"/><line x1="80" y1="620" x2="24" y2="676" stroke="#666"/>
+    <rect x="92" y="628" width="160" height="12" fill="#999"/><rect x="92" y="650" width="110" height="10" fill="#ccc"/>
+    <text x="320" y="654" font-size="12" fill="#333">4:12</text>
+  </g>
+  <g>
+    <rect x="16" y="692" width="358" height="72" fill="#fff" stroke="#333" stroke-width="2"/>
+    <rect x="24" y="700" width="56" height="56" fill="#ddd" stroke="#666"/><line x1="24" y1="700" x2="80" y2="756" stroke="#666"/><line x1="80" y1="700" x2="24" y2="756" stroke="#666"/>
+    <rect x="92" y="708" width="140" height="12" fill="#999"/><rect x="92" y="730" width="90" height="10" fill="#ccc"/>
+  </g>
+  <!-- Lecteur fixe -->
+  <rect x="0" y="776" width="390" height="68" fill="#ddd" stroke="#000" stroke-width="2"/>
+  <rect x="16" y="790" width="150" height="12" fill="#888"/><rect x="16" y="810" width="100" height="10" fill="#aaa"/>
+  <rect x="226" y="788" width="44" height="44" fill="none" stroke="#000"/><text x="240" y="816" font-size="14">⏮</text>
+  <rect x="276" y="788" width="44" height="44" fill="#999" stroke="#000"/><text x="292" y="816" font-size="14">▶</text>
+  <rect x="326" y="788" width="44" height="44" fill="none" stroke="#000"/><text x="340" y="816" font-size="14">⏭</text>
+</svg>

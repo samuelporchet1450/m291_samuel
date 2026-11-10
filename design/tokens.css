@@ -1,0 +1,37 @@
+/* s04-av1 — Mini design system Red Line
+   Rythme 8 px · échelle typographique en rem (1rem = 16px) */
+:root {
+  /* Espacements : multiples de 8 px (4 px uniquement pour les micro-ajustements) */
+  --space-0: 0.25rem;  /*  4px */
+  --space-1: 0.5rem;   /*  8px */
+  --space-2: 1rem;     /* 16px */
+  --space-3: 1.5rem;   /* 24px */
+  --space-4: 2rem;     /* 32px */
+  --space-5: 3rem;     /* 48px */
+  --space-6: 4rem;     /* 64px */
+
+  /* Typographie */
+  --font-xs: 0.75rem;   /* 12px — mentions, badges */
+  --font-sm: 0.875rem;  /* 14px — métadonnées */
+  --font-md: 1rem;      /* 16px — texte courant (jamais moins pour le corps) */
+  --font-lg: 1.25rem;   /* 20px — H3, intertitres */
+  --font-xl: 1.5rem;    /* 24px — H2 */
+  --font-2xl: 2rem;     /* 32px — H1 */
+  --leading-tight: 1.2; /* titres */
+  --leading-body: 1.5;  /* texte */
+
+  /* Couleurs Red Line — direction V3 « Mood map » (contrastes sur --c-fond) */
+  --c-fond: #f7f7f5;
+  --c-surface: #ffffff;
+  --c-texte: #0d0d0d;       /* ≈ 18:1 */
+  --c-texte-doux: #5f5f5b;  /* ≈ 6:1 (remplace #8c8c88 = 3.2:1, refusé) */
+  --c-accent: #d4ff3a;      /* FOND uniquement, texte encre dessus (≈ 17:1) */
+  --c-erreur: #b91c1c;      /* ≈ 6:1 */
+  --c-focus: #0d0d0d;
+
+  /* Formes */
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --tap-min: 2.75rem; /* 44px : zone tactile minimale */
+}

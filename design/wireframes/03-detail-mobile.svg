@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="844" viewBox="0 0 390 844" font-family="Arial, sans-serif">
+  <title>Wireframe 03 — Fiche détaillée playlist (390 px)</title>
+  <rect width="390" height="844" fill="#fff" stroke="#000" stroke-width="2"/>
+  <rect x="0" y="0" width="390" height="64" fill="#eee"/>
+  <rect x="8" y="10" width="170" height="44" fill="none" stroke="#666"/>
+  <text x="18" y="38" font-size="14">← Retour à la carte</text>
+  <!-- Titre 3 lignes -->
+  <text x="16" y="110" font-size="34" font-weight="bold">RED</text>
+  <text x="16" y="148" font-size="34" font-weight="bold">LINE</text>
+  <text x="16" y="186" font-size="34" font-weight="bold">SESSION</text>
+  <rect x="16" y="200" width="110" height="26" fill="#ccc" stroke="#000"/><text x="24" y="218" font-size="13">Nuit blanche</text>
+  <!-- Description -->
+  <rect x="16" y="242" width="358" height="10" fill="#bbb"/><rect x="16" y="260" width="340" height="10" fill="#bbb"/><rect x="16" y="278" width="250" height="10" fill="#bbb"/>
+  <!-- Mini-carte + stats -->
+  <rect x="16" y="304" width="120" height="120" fill="#f4f4f4" stroke="#333" stroke-width="2"/>
+  <circle cx="56" cy="360" r="8" fill="#000"/>
+  <text x="152" y="324" font-size="12" fill="#555">ÉNERGIE</text><text x="152" y="344" font-size="16" font-weight="bold">42 %</text>
+  <text x="270" y="324" font-size="12" fill="#555">LUMINOSITÉ</text><text x="270" y="344" font-size="16" font-weight="bold">32 %</text>
+  <text x="152" y="380" font-size="12" fill="#555">BPM MOYEN</text><text x="152" y="400" font-size="16" font-weight="bold">79</text>
+  <text x="270" y="380" font-size="12" fill="#555">DURÉE</text><text x="270" y="400" font-size="16" font-weight="bold">17 min</text>
+  <!-- Bouton principal -->
+  <rect x="16" y="440" width="358" height="56" fill="#999" stroke="#000" stroke-width="3"/>
+  <text x="150" y="475" font-size="18" font-weight="bold">▶ Lire</text>
+  <!-- Liste des morceaux -->
+  <text x="16" y="530" font-size="12" fill="#555">N°   TITRE                                   BPM   DURÉE</text>
+  <line x1="16" y1="538" x2="374" y2="538" stroke="#000"/>
+  <g font-size="13">
+    <text x="16" y="566">01</text><rect x="52" y="556" width="180" height="11" fill="#999"/><text x="280" y="566">72</text><text x="324" y="566">4:12</text>
+    <line x1="16" y1="580" x2="374" y2="580" stroke="#ccc"/>
+    <text x="16" y="608">02</text><rect x="52" y="598" width="150" height="11" fill="#999"/><text x="280" y="608">68</text><text x="324" y="608">3:47</text>
+    <line x1="16" y1="622" x2="374" y2="622" stroke="#ccc"/>
+    <text x="16" y="650">03</text><rect x="52" y="640" width="160" height="11" fill="#999"/><text x="280" y="650">84</text><text x="324" y="650">5:03</text>
+    <line x1="16" y1="664" x2="374" y2="664" stroke="#ccc"/>
+    <text x="16" y="692">04</text><rect x="52" y="682" width="140" height="11" fill="#999"/><text x="280" y="692">90</text><text x="324" y="692">3:58</text>
+  </g>
+  <rect x="0" y="776" width="390" height="68" fill="#ddd" stroke="#000" stroke-width="2"/>
+  <text x="16" y="806" font-size="13" font-weight="bold">Another Day, Slowed</text><text x="16" y="826" font-size="12" fill="#444">Kasper Vale · 0:42 / 4:12</text>
+  <rect x="276" y="788" width="44" height="44" fill="#999" stroke="#000"/><text x="290" y="816" font-size="14">⏸</text>
+</svg>
