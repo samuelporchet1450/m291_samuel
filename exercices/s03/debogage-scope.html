@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>s03-av1 — Débogage scope / closure</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 46rem; margin: 0 auto; padding: 1.5rem 1rem; color: #1c1917; background: #fffefa; }
+    section { border: 1px solid #e7e5e4; padding: 1rem; margin-bottom: 1rem; background: #fff; }
+    h2 { margin-top: 0; font-size: 1.1rem; }
+    button { margin: .2rem; padding: .45rem .8rem; border: 0; background: #1c1917; color: #fff; font-weight: 700; cursor: pointer; }
+    button:focus-visible { outline: 3px solid #ea580c; outline-offset: 2px; }
+    output { display: block; margin-top: .5rem; padding: .4rem .6rem; background: #fff7ed; font-family: ui-monospace, monospace; min-height: 1.4rem; }
+    pre { background: #f5f5f4; padding: .7rem; overflow: auto; font-size: .85rem; }
+  </style>
+</head>
+<body>
+  <h1>Piège : <code>var</code> dans une boucle</h1>
+
+  <section>
+    <h2>1. Version de l'IA (buggée)</h2>
+    <pre>var boutons = document.querySelectorAll("#bug button");
+for (var i = 0; i &lt; boutons.length; i++) {
+  boutons[i].addEventListener("click", function () {
+    sortie.textContent = "Bouton " + (i + 1) + " cliqué"; // i vaut 4 au moment du clic !
+  });
+}</pre>
+    <div id="bug"><button>Filtre 1</button><button>Filtre 2</button><button>Filtre 3</button><button>Filtre 4</button></div>
+    <output id="out-bug"></output>
+  </section>
+
+  <section>
+    <h2>2. Correctif moderne : <code>let</code></h2>
+    <div id="fix-let"><button>Filtre 1</button><button>Filtre 2</button><button>Filtre 3</button><button>Filtre 4</button></div>
+    <output id="out-let"></output>
+  </section>
+
+  <section>
+    <h2>3. Alternative : <code>forEach</code> + <code>event.currentTarget</code></h2>
+    <div id="fix-foreach"><button data-filtre="Rock">Rock</button><button data-filtre="Pop">Pop</button><button data-filtre="Jazz">Jazz</button><button data-filtre="Électro">Électro</button></div>
+    <output id="out-foreach"></output>
+  </section>
+
+  <script>
+    // 1. BUG : var a une portée de FONCTION (ici globale). Il n'existe qu'UN seul i, partagé
+    // par les 4 fonctions. Quand on clique, la boucle est finie depuis longtemps : i vaut 4.
+    var sortieBug = document.getElementById("out-bug");
+    var boutonsBug = document.querySelectorAll("#bug button");
+    for (var i = 0; i < boutonsBug.length; i++) {
+      boutonsBug[i].addEventListener("click", function () {
+        sortieBug.textContent = "Bouton " + (i + 1) + " cliqué (i vaut " + i + ")";
+        console.log("version bug, i =", i);
+      });
+    }
+
+    // 2. FIX let : let a une portée de BLOC. Chaque tour de boucle crée un NOUVEAU j.
+    // Chaque fonction « se souvient » de son propre j (c'est la closure).
+    const sortieLet = document.getElementById("out-let");
+    const boutonsLet = document.querySelectorAll("#fix-let button");
+    for (let j = 0; j < boutonsLet.length; j++) {
+      boutonsLet[j].addEventListener("click", function () {
+        sortieLet.textContent = "Bouton " + (j + 1) + " cliqué";
+      });
+    }
+
+    // 3. FIX forEach : pas de compteur du tout. On lit l'info sur le bouton cliqué lui-même.
+    const sortieForEach = document.getElementById("out-foreach");
+    document.querySelectorAll("#fix-foreach button").forEach(function (bouton) {
+      bouton.addEventListener("click", function (event) {
+        sortieForEach.textContent = "Filtre « " + event.currentTarget.dataset.filtre + " » activé";
+      });
+    });
+  </script>
+</body>
+</html>

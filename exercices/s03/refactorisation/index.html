@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>s03-av2 — Panier refactorisé</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 32rem; margin: 0 auto; padding: 1.5rem 1rem; }
+    button { padding: .4rem .7rem; margin: .15rem; cursor: pointer; }
+    #total { font-size: 2rem; font-weight: 700; }
+    #message { color: #166534; font-weight: 600; }
+  </style>
+</head>
+<body>
+  <h1>Billets — Scène du lac</h1>
+  <div id="ajouts">
+    <button type="button" data-type="adulte">+ Adulte (25)</button>
+    <button type="button" data-type="etudiant">+ Étudiant (15)</button>
+    <button type="button" data-type="enfant">+ Enfant (10)</button>
+  </div>
+  <ul id="liste"></ul>
+  <p>Total : <span id="total">0 CHF</span></p>
+  <p id="message" hidden>Réduction de 10 % appliquée !</p>
+  <button type="button" id="vider">Vider le panier</button>
+  <script src="refactorisation-app.js"></script>
+</body>
+</html>
