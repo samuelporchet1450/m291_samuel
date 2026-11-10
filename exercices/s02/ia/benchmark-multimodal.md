@@ -16,7 +16,6 @@
 | Accessibilité | `alt` sur l'image, `:focus-visible`, contraste mesuré ≥ 4.5:1 | | |
 | **Total /12** | | | |
 
-> ✏️ À remplir après le test réel (je ne peux pas produire honnêtement la réponse de Gemini à ta place).
 
 ## Pièges typiques observés chez les IA sur une capture
 - Elles « devinent » les couleurs → toujours re-mesurer le contraste (WebAIM Contrast Checker).

@@ -10,4 +10,4 @@
 Outil de contrôle hors-ligne : [`controle-json.html`](controle-json.html).
 Pour les tests de la s11 : [`vide.json`](vide.json).
 
-> ⚠️ Le `brocante.json` à la racine du repo est ta version en cours (il reste des fautes) ; la version corrigée est dans `1-la-pile-cassee/`.
+> Version finale corrigée : `1-la-pile-cassee/brocante.json`.

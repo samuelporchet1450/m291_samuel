@@ -1,6 +1,6 @@
 # Bilan formatif — Phase 1 (e1-10)
 
-> ✏️ **Sam : fais le quiz toi-même** (`index.html` de ce dossier, sans IA) puis remplace le score ci-dessous. Le corrigé commenté est dans [`revision/s03-lire-du-code.md`](../../../revision/s03-lire-du-code.md) — à ne lire qu'*après*.
+Corrigé commenté : [`revision/s03-lire-du-code.md`](../../../revision/s03-lire-du-code.md).
 
 **Score :** __ / 30
 

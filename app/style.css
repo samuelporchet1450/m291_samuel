@@ -1,4 +1,4 @@
-/* =========================================================
+﻿/* =========================================================
    Red Line — direction V3 « Mood map »
    s09 : variables, mobile first, Grid/Flex
    s13 : micro-interactions + prefers-reduced-motion
@@ -112,6 +112,7 @@ main {
   margin: 0 auto;
   padding: var(--s-3) var(--s-2) var(--s-5);
   display: grid;
+  grid-template-columns: minmax(0, 1fr); /* empêche un enfant trop large d'élargir la page */
   gap: var(--s-4);
 }
 .hero h1 { font-size: var(--t-2xl); font-weight: 800; letter-spacing: -0.02em; }
@@ -138,7 +139,7 @@ main {
 
 /* ---------- Filtres ---------- */
 .filtres { display: grid; gap: var(--s-2); }
-.humeurs { border: 0; margin: 0; padding: 0; display: grid; gap: var(--s-1); }
+.humeurs { border: 0; margin: 0; padding: 0; min-width: 0; /* un fieldset refuse de rétrécir par défaut */ display: grid; gap: var(--s-1); }
 .humeurs__liste { display: flex; flex-wrap: wrap; gap: var(--s-1); }
 .puce {
   min-height: var(--cible);

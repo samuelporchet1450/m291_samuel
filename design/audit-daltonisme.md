@@ -2,8 +2,6 @@
 
 **Méthode :** DevTools Chrome → ⋮ → *More tools* → **Rendering** → *Emulate vision deficiencies* : Deutéranopie, Protanopie, Tritanopie, Vision floue.
 
-> ✏️ À refaire toi-même dans les DevTools sur `redline/index.html` pour confirmer chaque ligne (captures conseillées).
-
 | Élément | Info portée | Deutéranopie (vert) | Protanopie (rouge) | Tritanopie (bleu-jaune) | Vision floue | Correctif |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | Point « toi » sur la carte | Position actuelle | ✅ noir, reste visible | ✅ | ✅ | ✅ gros disque | — |

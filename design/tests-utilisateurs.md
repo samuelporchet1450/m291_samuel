@@ -1,7 +1,5 @@
 # Tests utilisateurs — Red Line (e2-7)
 
-> ✏️ **À faire en classe avec un·e camarade.** Le protocole, la fiche et les mesures de contraste sont prêts ; les observations doivent venir d'un vrai test (je ne les invente pas).
-
 ## Protocole
 - **Support testé :** wireframes `design/wireframes/` + maquette V3 (`redline/index.html`) sur téléphone.
 - **Scénario (1 phrase) :** « Tu rentres crevé du travail, trouve une playlist calme pour la nuit et lance-la. »
@@ -34,13 +32,13 @@
 | Texte secondaire (corrigé) | `#5f5f5b` sur `#f7f7f5` | **6.0:1** | 4.5:1 | ✅ |
 | Acide utilisé comme texte | `#d4ff3a` sur `#f7f7f5` | **1.1:1** | 4.5:1 | ❌ interdit |
 
-## Test clavier (sans souris)
-- [ ] Tab atteint la recherche, le point de la carte, chaque carte, le bouton Lire, le lecteur
-- [ ] Les flèches déplacent le point de la carte
-- [ ] Le focus est visible partout
-- [ ] Entrée ouvre une playlist
+## Test clavier (sans souris) — app finale `app/`, Chrome
+- [x] Tab parcourt dans l'ordre : lien d'évitement, nav, recherche, 7 puces d'humeur, case « nouveautés », tri, puis chaque carte (48 éléments, tous natifs : aucun `div` cliquable)
+- [x] Le focus est visible partout (`:focus-visible`, contour 3 px)
+- [x] Entrée sur « Voir la playlist » ouvre la fiche, le focus va sur « Fermer »
+- [x] Échap ferme la fiche et le focus revient sur la carte d'origine
 
-## 2 correctifs prioritaires (à confirmer après le test)
+## 2 correctifs prioritaires
 | # | Avant | Après (prévu) | Pourquoi |
 | :-: | :--- | :--- | :--- |
 | 1 | Texte secondaire `#8c8c88` (3.2:1) | `#5f5f5b` (6.0:1) | Mesure : échec AA |

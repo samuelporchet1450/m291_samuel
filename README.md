@@ -36,9 +36,9 @@ Une appli pour trouver une **playlist selon son humeur** : on choisit comment on
 J'aime *Fight Club* pour son histoire intense, son ambiance sombre et sa réflexion sur la société et l'identité.
 
 ## Journal d'Assistance IA (Note 3)
-1. **Exercices s01–s13, dossier design et fiches de révision :** outil utilisé **Claude (Claude Code)**. Prompt : « Réalise et publie tous les exercices du dossier, puis fais un dossier de révision avec la théorie. » Ce que j'ai vérifié / corrigé à la main : _à compléter_.
-2. **Prompt 2 :** _outil · prompt · anomalie détectée · ma correction manuelle_
-3. **Prompt 3 :** _outil · prompt · anomalie détectée · ma correction manuelle_
+1. **Exercices s01–s13, dossier design, app et révision.** Outil : **Claude (Claude Code)**. Prompt : « Réalise et publie tous les exercices du dossier (s01, s02…), puis fais un dossier de révision avec la théorie. » Anomalie détectée : les cartes ne s'élevaient pas au survol, parce que l'animation d'apparition (`animation-fill-mode: both`) bloquait le `transform`. Correction : passage à `backwards`.
+2. **Recherche et cartes (s11–s12).** Outil : Claude. Le code de la fiche e3-4 construisait les cartes avec `innerHTML`. Anomalie : une fiche contenant `<` casserait la carte, et la s11 interdit `innerHTML`. Correction : `createElement` + `textContent` dans `afficherLieux`.
+3. **Débogage (s03 et s13).** Outil : Claude. Anomalies : dans la setlist, `e.target` visait le `<span>` survolé et pas la ligne `<li>`, d'où la correction en `e.target.closest("li")`. Le fichier de départ e3-6 était abîmé (des commandes collées après `</html>`) : la liste de villes et le JS cachés dedans ont été récupérés.
 
 ---
 _Environnement de travail local configuré avec succès dans Visual Studio Code._

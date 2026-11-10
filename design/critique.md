@@ -8,7 +8,11 @@ Les 3 directions ont été générées avec l'IA à partir de [`brief.md`](../br
 | **V2 — Riso zine** | `Redline-backups/v2_2026-09-29_riso-zine/` | Papier `#f0e9da`, encres riso (rose, bleu, jaune, vert, orange, violet), grain, Bricolage Grotesque + IBM Plex Mono. Piste « chaleureuse ». |
 | **V3 — Mood map** | `Redline-backups/v3_2026-09-29_mood-map/` (= `redline/` actuel) | Papier `#f7f7f5`, encre `#0d0d0d`, une seule couleur acide `#d4ff3a`, traits fins, Inter Tight + JetBrains Mono. Piste « éditoriale & sobre ». |
 
-> ✏️ Captures PNG à ajouter dans `design/propositions/` (`piste-a…png` etc.) : ouvrir chaque `index.html` des backups et faire une capture 390 px.
+| Capture | V1 | V2 | V3 |
+| :--- | :---: | :---: | :---: |
+| Desktop 1440 px | ![V1](propositions/piste-a-sombre-neon.png) | ![V2](propositions/piste-b-riso-zine.png) | ![V3](propositions/piste-c-mood-map.png) |
+
+Résultat intégré (app finale) : ![App](propositions/app-finale-desktop.png)
 
 ## Matrice d'évaluation (1 = cassé · 5 = très bien)
 | Critère | V1 Sombre néon | V2 Riso zine | V3 Mood map |

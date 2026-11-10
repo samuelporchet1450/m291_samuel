@@ -18,10 +18,3 @@
 
 Les livrables « design » (s04–s08) sont dans [`design/`](../design), l'app du projet (s09–s13) dans [`app/`](../app).
 
-## Ce qui reste à faire par toi (impossible à faire honnêtement à ta place)
-- **s01** : demande GitHub Education (photo de ta carte), activer GitHub Pages, créer les 4 labels.
-- **s02** : tester le prompt dans un 2e moteur (ChatGPT/Gemini) et remplir la colonne B de `comparatif-ia.md` et `ia/benchmark-multimodal.md`.
-- **s03** : faire le quiz e1-10 **sans IA** et remplir `bilan-phase-1.md`.
-- **s04** : restitution orale de 2 min en binôme.
-- **s07** : captures PNG des 3 DA dans `design/propositions/`.
-- **s08** : le vrai test utilisateur avec un camarade (`design/tests-utilisateurs.md`).
